@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:progetto/screens/LoginPage.dart';
+import 'package:progetto_wearable/screens/LoginPage.dart';
 
 void main() {
   runApp(const MyApp());

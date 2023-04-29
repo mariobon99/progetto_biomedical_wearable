@@ -1,4 +1,4 @@
-# progetto
+# progetto_wearable
 
 A new Flutter project.
 

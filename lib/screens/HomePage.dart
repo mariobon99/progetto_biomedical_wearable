@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:progetto/screens/ProfilePage.dart';
-import 'package:progetto/screens/ComunityPage.dart';
-import 'package:progetto/screens/PlacePage.dart';
-import 'package:progetto/screens/AdvicePage.dart';
+import 'package:progetto_wearable/screens/ProfilePage.dart';
+import 'package:progetto_wearable/screens/ComunityPage.dart';
+import 'package:progetto_wearable/screens/PlacePage.dart';
+import 'package:progetto_wearable/screens/AdvicePage.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -27,24 +27,22 @@ class MyStatefulWidget extends StatefulWidget {
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _selectedIndex = 0;
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: <Widget> [
-            IconButton(
-              icon: const Icon(Icons.person),
-              onPressed: () {
-               Navigator.push(context, MaterialPageRoute(builder: ((context) => ProfilePage())));
-              },   
-            ),
-          ],
-         title: Text(HomePage.routename),
-       ),
-      
-      body: Center(
-        child: const Text('Fare qualcosa')),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: ((context) => ProfilePage())));
+            },
+          ),
+        ],
+        title: Text(HomePage.routename),
+      ),
+      body: Center(child: const Text('Fare qualcosa')),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -65,13 +63,16 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         onTap: (int index) {
           switch (index) {
             case 0:
-              Navigator.push(context, MaterialPageRoute(builder: ((context) => PlacePage())));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: ((context) => PlacePage())));
               break;
             case 1:
-              Navigator.push(context, MaterialPageRoute(builder: ((context) => AdvisePage())));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: ((context) => AdvisePage())));
               break;
             case 2:
-              Navigator.push(context, MaterialPageRoute(builder: ((context) => CommunityPage())));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: ((context) => CommunityPage())));
               break;
           }
           setState(
@@ -84,7 +85,3 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     );
   }
 }
-
-
-
-

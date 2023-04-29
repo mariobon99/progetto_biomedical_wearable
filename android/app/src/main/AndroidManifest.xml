@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.progetto">
+    package="com.example.progetto_wearable">
    <application
-        android:label="progetto"
+        android:label="progetto_wearable"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
