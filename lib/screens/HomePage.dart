@@ -42,7 +42,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         ],
         title: Text(HomePage.routename),
       ),
-      body: Center(child: const Text('Fare qualcosa')),
+      body: Center(child: const Text('Ciao')),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
