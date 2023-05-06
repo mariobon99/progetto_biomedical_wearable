@@ -5,7 +5,7 @@ import 'package:progetto_wearable/screens/MainPagewithNavBar.dart';
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
 
-  static const routename = 'LoginPage';
+  static const routename = 'Padova Sostenibile';
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -19,6 +19,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text(LoginPage.routename),
+          centerTitle: true,
         ),
         body: Center(
           child: Column(

@@ -21,18 +21,14 @@ class _MainPageState extends State<MainPage> {
     AdvisePage(),
     CommunityPage()
   ];
-  List<String> titles = [
-    'Home Page',
-    'Places Finder',
-    'Useful advice',
-    'Community'
-  ];
+  List<String> titles = ['Home', 'Place finder', 'Useful advices', 'Community'];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(titles[_selectedIndex]),
+        centerTitle: true,
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.person),
