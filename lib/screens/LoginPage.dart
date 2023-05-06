@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:progetto_wearable/screens/MainPagewithNavBar.dart';
 //import 'package:flutter_login/theme.dart';
-import 'package:progetto_wearable/screens/homePage.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  LoginPage({Key? key}) : super(key: key);
 
   static const routename = 'LoginPage';
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  void clearText() {
+    usernameController.clear();
+    passwordController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +28,7 @@ class LoginPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: TextFormField(
+                  controller: usernameController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(90.0),
@@ -33,6 +41,7 @@ class LoginPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: TextFormField(
+                  controller: passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -41,25 +50,47 @@ class LoginPage extends StatelessWidget {
                     labelText: 'Password',
                     icon: Icon(Icons.lock),
                   ),
-                  onSaved: (PasswordInserita) {},
-                  validator: (PasswordInserita) {},
                 ),
               ),
               Container(
-                  height: 80,
-                  padding: const EdgeInsets.all(20),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
-                    ),
-                    child: const Text('Log In'),
-                    onPressed: () {
-                      Navigator.push(
+                width: 130,
+                height: 50,
+                padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                child: ElevatedButton(
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.login,
+                        size: 15,
+                        //color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      const Text(
+                        'Login',
+                      )
+                    ],
+                  ),
+                  onPressed: () {
+                    if (usernameController.text == 'Marzia' &&
+                        passwordController.text == '123456') {
+                      clearText();
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: ((context) => HomePage())));
-                    },
-                  )),
+                              builder: (context) => const MainPage()));
+                    } else {
+                      ScaffoldMessenger.of(context)
+                        ..clearSnackBars()
+                        ..showSnackBar(const SnackBar(
+                          content: Text('Wrong credentials'),
+                          duration: Duration(seconds: 2),
+                        ));
+                    }
+                  },
+                ),
+              ),
             ],
           ),
         ));

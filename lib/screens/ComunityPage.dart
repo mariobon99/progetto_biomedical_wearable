@@ -7,15 +7,6 @@ class CommunityPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //print('${CalendarPage.routename} built');
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(CommunityPage.routename),
-      ),
-      body: Center(
-        child: Text('Fare qualcosa con Community(?)'),
-            ),
-        );
-  } //build
-
+    return const Center(child: Text('Fare qualcosa con Community(?)'));
+  } //buil
 } //ProfilePage

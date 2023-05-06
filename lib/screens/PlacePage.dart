@@ -7,15 +7,8 @@ class PlacePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //print('${CalendarPage.routename} built');
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(PlacePage.routename),
-      ),
-      body: Center(
-        child: Text('Inserire vari posti con distanza'),
-            ),
-        );
-  } //build
-
-} //ProfilePage
+    return Center(
+      child: Text('Inserire vari posti con distanza'),
+    );
+  }
+}

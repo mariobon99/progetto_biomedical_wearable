@@ -8,14 +8,8 @@ class AdvisePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //print('${CalendarPage.routename} built');
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AdvisePage.routename),
-      ),
-      body: Center(
-        child: Text('Vari consigli...'),
-            ),
-        );
+    return const Center(
+      child: Text('Vari consigli...'),
+    );
   } //build
-
 } //ProfilePage
