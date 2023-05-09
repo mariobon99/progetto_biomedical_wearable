@@ -46,7 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Container(
                 width: 200,
                 height: 200,
-                decoration: BoxDecoration(color: Colors.red[200]),
+                decoration: BoxDecoration(color: Colors.green[200]),
                 child: _image != null
                     ? Image.file(
                         _image,
@@ -55,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         fit: BoxFit.fitHeight,
                       )
                     : Container(
-                        decoration: BoxDecoration(color: Colors.red[200]),
+                        decoration: BoxDecoration(color: Colors.green[200]),
                         width: 200,
                         height: 200,
                         child: Icon(
