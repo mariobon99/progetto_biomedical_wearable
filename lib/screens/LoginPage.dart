@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:progetto_wearable/screens/MainPagewithNavBar.dart';
+import 'package:progetto_wearable/screens/RegisterPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:flutter_login/theme.dart';
 
 class LoginPage extends StatelessWidget {
@@ -73,25 +75,59 @@ class LoginPage extends StatelessWidget {
                       )
                     ],
                   ),
-                  onPressed: () {
-                    if (usernameController.text == 'Marzia' &&
-                        passwordController.text == '123456') {
-                      clearText();
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const MainPage()));
-                    } else {
+                  onPressed: () async {
+                    final sp = await SharedPreferences.getInstance();
+                    final username = sp.getString('username');
+                    final password = sp.getString('password');
+                    if (username == null || password == null) {
                       ScaffoldMessenger.of(context)
                         ..clearSnackBars()
                         ..showSnackBar(const SnackBar(
-                          content: Text('Wrong credentials'),
+                          content: Text('Register'),
                           duration: Duration(seconds: 2),
                         ));
+                    } else {
+                      if (usernameController.text == username &&
+                          passwordController.text == password) {
+                        clearText();
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MainPage()));
+                      } else {
+                        ScaffoldMessenger.of(context)
+                          ..clearSnackBars()
+                          ..showSnackBar(const SnackBar(
+                            content: Text('Wrong credentials'),
+                            duration: Duration(seconds: 2),
+                          ));
+                      }
                     }
                   },
                 ),
               ),
+              Container(
+                padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RegisterPage()));
+                  },
+                  child: Text(
+                    'First time? Register',
+                    selectionColor: Colors.blue,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                  onPressed: () async {
+                    final sp = await SharedPreferences.getInstance();
+                    await sp.remove('username');
+                    await sp.remove('password');
+                  },
+                  child: Text('DEBUG:Empty shared preferences'))
             ],
           ),
         ));
