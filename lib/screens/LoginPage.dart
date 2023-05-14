@@ -109,11 +109,23 @@ class LoginPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
                 child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RegisterPage()));
+                  onTap: () async {
+                    final sp = await SharedPreferences.getInstance();
+                    final username = sp.getString('username');
+                    final password = sp.getString('password');
+                    if (username == null || password == null) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegisterPage()));
+                    } else {
+                      ScaffoldMessenger.of(context)
+                        ..clearSnackBars()
+                        ..showSnackBar(const SnackBar(
+                          content: Text('Already registered, login'),
+                          duration: Duration(seconds: 2),
+                        ));
+                    }
                   },
                   child: Text(
                     'First time? Register',
