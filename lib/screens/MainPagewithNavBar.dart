@@ -5,6 +5,9 @@ import 'package:progetto_wearable/screens/ComunityPage.dart';
 import 'package:progetto_wearable/screens/PlacePage.dart';
 import 'package:progetto_wearable/screens/AdvicePage.dart';
 import 'package:progetto_wearable/screens/HomePage.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:line_icons/line_icons.dart';
+import 'package:progetto_wearable/utils/palette.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -15,12 +18,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
-  List<Widget> screens = [
-    HomePage(),
-    PlacePage(),
-    AdvisePage(),
-    CommunityPage()
-  ];
+  List screens = [HomePage(), PlacePage(), AdvisePage(), CommunityPage()];
   List<String> titles = ['Home', 'Place finder', 'Useful advices', 'Community'];
 
   @override
@@ -31,7 +29,7 @@ class _MainPageState extends State<MainPage> {
         centerTitle: true,
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.person),
+            icon: const Icon(LineIcons.userCircle),
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: ((context) => ProfilePage())));
@@ -44,8 +42,8 @@ class _MainPageState extends State<MainPage> {
           child: ListView(
         children: [
           ListTile(
-              title: Text('Profile'),
-              trailing: Icon(Icons.person),
+              title: const Text('Profile'),
+              trailing: const Icon(LineIcons.userCircle),
               onTap: () {
                 Navigator.push(
                     context,
@@ -54,8 +52,8 @@ class _MainPageState extends State<MainPage> {
                     ));
               }),
           ListTile(
-              title: Text('Logout'),
-              trailing: Icon(Icons.logout),
+              title: const Text('Logout'),
+              trailing: const Icon(Icons.logout),
               onTap: () {
                 Navigator.pushReplacement(
                     context,
@@ -65,37 +63,56 @@ class _MainPageState extends State<MainPage> {
               }),
         ],
       )),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Palette.mainColor,
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 20,
+              color: Colors.black.withOpacity(.1),
+            )
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+            child: GNav(
+              rippleColor: Colors.grey[300]!,
+              hoverColor: Colors.grey[100]!,
+              gap: 8,
+              activeColor: Palette.black,
+              iconSize: 24,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              duration: const Duration(milliseconds: 400),
+              tabBackgroundColor: Palette.mainColorShade,
+              color: Palette.black,
+              tabs: const [
+                GButton(
+                  icon: LineIcons.home,
+                  text: 'Home',
+                ),
+                GButton(
+                  icon: LineIcons.mapMarked,
+                  text: 'Places',
+                ),
+                GButton(
+                  icon: LineIcons.questionCircle,
+                  text: 'Advices',
+                ),
+                GButton(
+                  icon: LineIcons.personEnteringBooth,
+                  text: 'Community',
+                ),
+              ],
+              selectedIndex: _selectedIndex,
+              onTabChange: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Place',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.question_mark),
-            label: 'Advise',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: 'Community',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        backgroundColor: Colors.lightGreen,
-        selectedItemColor: Colors.white,
-        selectedIconTheme: IconThemeData(size: 35),
-        onTap: (int index) {
-          setState(
-            () {
-              _selectedIndex = index;
-            },
-          );
-        },
+        ),
       ),
     );
   }
