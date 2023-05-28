@@ -85,7 +85,7 @@ class _MainPageState extends State<MainPage> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               duration: const Duration(milliseconds: 400),
               tabBackgroundColor: Palette.mainColorShade,
-              color: Palette.black,
+              color: Palette.white,
               tabs: const [
                 GButton(
                   icon: LineIcons.home,
