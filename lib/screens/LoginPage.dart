@@ -86,10 +86,10 @@ class LoginPage extends StatelessWidget {
                     final username = sp.getString('username');
                     final password = sp.getString('password');
 
-                    //tento di prendere il refresh dalle shared preferences,se non c'è allora mi ritorna null
+                    //prendo il refresh dalle shared preferences, se non c'è allora mi ritorna null
                     final refresh= sp.getString('refresh');
-                    final access= sp.getString('access'); //Debug: usato per vedere se dopo 5 min quando access scatudo mi rimanda al login impact
-                    print(refresh);
+                    //final access= sp.getString('access'); Usato per Debug: usato per vedere se dopo 5 min quando access scatudo mi rimanda al login impact
+              
                     if (username == null || password == null) {
                       ScaffoldMessenger.of(context)
                         ..clearSnackBars()
@@ -101,15 +101,15 @@ class LoginPage extends StatelessWidget {
                       if (usernameController.text == username &&
                           passwordController.text == password) {
                         clearText();
-                        if(access == null){
-                          //primo accesso dell'utente, nelle shared preferences non c'è salvato il refresh
+                        if(refresh == null){
+                          //primo accesso dell'utente,  non ho ancora nulla nelle shared preferences
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>  LoginImpactPage()));
                         } else {
                           //refresh salvato, controllo se valido
-                           if(JwtDecoder.isExpired(access as String)){
+                           if(JwtDecoder.isExpired(refresh as String)){
                               //se refresh scaduto lo rimando al login impact in cui poi viene generato nuono JWT
                               Navigator.pushReplacement(
                               context,
