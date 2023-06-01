@@ -12,7 +12,9 @@ final String latitude;
 // longitude of the place
 final String longitude;
 
+final String imageLink;
+
   //Default constructor
-  Place(this.id, this.latitude, this.longitude);
+  Place(this.id, this.latitude, this.longitude, this.imageLink);
 
 } //Place

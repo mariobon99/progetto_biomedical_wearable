@@ -14,9 +14,11 @@ class User{
 
   final String email;
 
-  //Level of the user in the application
+  //Level of the user in the application (possible values: 1,2,3)
   final int level;
 
+  final double distance;
+
   //Default constructor
-  User(this.id, this.username,this.password,this.email, this.level);
+  User(this.id, this.username,this.password,this.email, this.level, this.distance);
 } //User

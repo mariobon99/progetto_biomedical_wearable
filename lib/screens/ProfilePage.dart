@@ -155,7 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
               height: 20,
             ),
             ListTile(
-              title: const Text('Your Achievement'),
+              title: const Text('Your Achievements'),
               leading: const ImageIcon(
                           AssetImage("assets/images/medal.png"),
                           color: Palette.black,

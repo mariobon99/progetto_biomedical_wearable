@@ -22,8 +22,13 @@ abstract class UsersDao{
   @Update(onConflict: OnConflictStrategy.replace)
   Future<void> updateUser(User user);
 
+  //Query that allows to select user's average distance 
   @Query('SELECT distance FROM User WHERE id=:id')
   Future<Int> findUserDistance();
+
+    //Query that allows to select user's level
+  @Query('SELECT level FROM User WHERE id=:id')
+  Future<double> findUserLevel();
 
 
 
