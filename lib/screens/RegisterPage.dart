@@ -9,6 +9,7 @@ class RegisterPage extends StatelessWidget {
 
   static const routename = 'Register';
   final usernameController = TextEditingController();
+  final mailController = TextEditingController();
   final passwordController = TextEditingController();
   final passwordController2 = TextEditingController();
 
@@ -38,7 +39,20 @@ class RegisterPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(90.0),
                     ),
                     labelText: 'Username',
-                    icon: Icon(Icons.person),
+                    icon: const Icon(Icons.person),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.fromLTRB(50, 20, 50, 0),
+                child: TextFormField(
+                  controller: mailController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(90.0),
+                    ),
+                    labelText: 'E-mail',
+                    icon: const Icon(Icons.mail),
                   ),
                 ),
               ),
@@ -52,7 +66,7 @@ class RegisterPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(90.0),
                     ),
                     labelText: 'Password',
-                    icon: Icon(Icons.lock),
+                    icon: const Icon(Icons.lock),
                   ),
                 ),
               ),
@@ -66,7 +80,7 @@ class RegisterPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(90.0),
                     ),
                     labelText: 'Confirm Password',
-                    icon: Icon(Icons.lock),
+                    icon: const Icon(Icons.lock),
                   ),
                 ),
               ),
@@ -92,19 +106,21 @@ class RegisterPage extends StatelessWidget {
                   ),
                   onPressed: () async {
                     if (usernameController.text != '' &&
+                        mailController.text != '' &&
                         passwordController.text != '' &&
                         passwordController.text != '' &&
                         passwordController.text == passwordController2.text) {
                       final sp = await SharedPreferences.getInstance();
                       await sp.setString('username', usernameController.text);
                       await sp.setString('password', passwordController.text);
+                      await sp.setString('mail', mailController.text);
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) => LoginPage()));
                     } else {
                       ScaffoldMessenger.of(context)
                         ..clearSnackBars()
                         ..showSnackBar(const SnackBar(
-                          content: Text('Wrong credentials'),
+                          content: Text('Fill all fields'),
                           duration: Duration(seconds: 2),
                         ));
                     }
