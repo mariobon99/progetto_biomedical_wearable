@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:progetto_wearable/utils/palette.dart';
 import 'dart:async';
 import 'package:progetto_wearable/utils/placeToVisit.dart';
-
 
 class PlacePage extends StatefulWidget {
   const PlacePage({Key? key}) : super(key: key);
@@ -10,7 +10,7 @@ class PlacePage extends StatefulWidget {
   static const routename = 'PlacePage';
 
   @override
-  PlacePageState createState() =>  PlacePageState();
+  PlacePageState createState() => PlacePageState();
 }
 
 class PlacePageState extends State<PlacePage> {
@@ -19,15 +19,15 @@ class PlacePageState extends State<PlacePage> {
   Data data = Data();
   StreamSubscription<Position>? positionStream;
 
-
   @override
   void dispose() {
     super.dispose();
+
     /// don't forget to cancel stream once no longer needed
     positionStream?.cancel();
   }
 
-    /// Determine the current position of the device
+  /// Determine the current position of the device
   void _determinePosition() async {
     // Test if location services are enabled.
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -55,7 +55,8 @@ class PlacePageState extends State<PlacePage> {
 
     if (permission == LocationPermission.deniedForever) {
       // Permissions are denied forever, handle appropriately.
-      print('Location permissions are permanently denied, we cannot request permissions.');
+      print(
+          'Location permissions are permanently denied, we cannot request permissions.');
 
       /// open app settings so that user changes permissions
       // await Geolocator.openAppSettings();
@@ -73,10 +74,10 @@ class PlacePageState extends State<PlacePage> {
     });
   }
 
-
   Future _getTheDistance() async {
-   _determinePosition();
-   _currentUserPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    _determinePosition();
+    _currentUserPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
 
     for (int i = 0; i < data.allplaces.length; i++) {
       double storelat = data.allplaces[i]['latitudine'];
@@ -90,10 +91,10 @@ class PlacePageState extends State<PlacePage> {
       );
       var distance = distanceImMeter?.toDouble();
 
-      if (distance != null && distance >1000) {
-        data.allplaces[i]['distance'] =(distance /1000);        
-      }else {
-        data.allplaces[i]['distance'] =(distance!);
+      if (distance != null && distance > 1000) {
+        data.allplaces[i]['distance'] = (distance / 1000);
+      } else {
+        data.allplaces[i]['distance'] = (distance!);
       }
       setState(() {});
     }
@@ -110,7 +111,7 @@ class PlacePageState extends State<PlacePage> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
       child: GridView.builder(
           itemCount: data.allplaces.length,
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -120,53 +121,66 @@ class PlacePageState extends State<PlacePage> {
             mainAxisSpacing: 10,
           ),
           itemBuilder: (context, index) {
-            return Container(
-              color: Colors.lightGreen,
-              height: height * 0.9,
-              width: width * 0.3,
-              child: Column(
-                children: [
-                  Container(
-                    height: height * 0.13,
-                    width: width,
-                    child: Image.network(
-                      data.allplaces[index]['image'],
-                      fit: BoxFit.fill,
+            return GestureDetector(
+              onTap: () {
+                ScaffoldMessenger.of(context)
+                  ..removeCurrentSnackBar()
+                  ..showSnackBar(SnackBar(
+                      content: Text(
+                          'Hai selezionato ${data.allplaces[index]['name']}')));
+              },
+              child: Container(
+                color: Palette.tertiaryColor,
+                height: height * 0.9,
+                width: width * 0.3,
+                child: Column(
+                  children: [
+                    Container(
+                      height: height * 0.13,
+                      width: width,
+                      child: Image.network(
+                        data.allplaces[index]['image'],
+                        fit: BoxFit.fill,
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    data.allplaces[index]['name'],
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                    SizedBox(
+                      height: 5,
                     ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.location_on),
-                      //if (data.allplaces[index]['distance'] < 1000) 
-                      //devo sistemare bene tra metri e chilometri
-
-
-                      Text(
-                        "${data.allplaces[index]['distance'].round()} KM Away",
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.black,
+                    FittedBox(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        child: Text(
+                          data.allplaces[index]['name'],
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Palette.white,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.location_on),
+                        //if (data.allplaces[index]['distance'] < 1000)
+                        //devo sistemare bene tra metri e chilometri
+
+                        Text(
+                          "${data.allplaces[index]['distance'].round()} KM Away",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: Palette.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             );
           }),

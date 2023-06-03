@@ -48,109 +48,103 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: Palette.bgColor,
       appBar: AppBar(title: const Text('$routename')),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
-              alignment: Alignment.topCenter,
-              children: <Widget>[
-                Container(
-                  margin: const EdgeInsets.only(top: 90.0),
-                  width: double.infinity,
-                  child: Card(
-                    color: Palette.mainColorShade,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: 70, bottom: 0, left: 10, right: 10),
-                          child: Column(
-                            children: <Widget>[
-                              const Text("Username",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              Text("$username"),
-                              const SizedBox(height: 20),
-                              const Text("Email",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              Text("marzia@gmail.com"),
-                              const SizedBox(height: 20),
-                            ],
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+          child: Column(
+            children: [
+              Stack(
+                alignment: Alignment.topCenter,
+                children: <Widget>[
+                  Container(
+                    margin: const EdgeInsets.only(top: 90.0),
+                    width: double.infinity,
+                    child: Card(
+                      color: Palette.mainColorShade,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: 70, bottom: 0, left: 10, right: 10),
+                            child: Column(
+                              children: <Widget>[
+                                const Text("Username",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Text("$username"),
+                                const SizedBox(height: 20),
+                                const Text("Email",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Text("marzia@gmail.com"),
+                                const SizedBox(height: 20),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
+                  _imageProfile(),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              ListTile(
+                title: const Text('Your Level'),
+                subtitle: const Text('Bradipo'),
+                leading: const ImageIcon(
+                  AssetImage("assets/images/level-up.png"),
+                  color: Palette.black,
+                  size: 30,
                 ),
-                _imageProfile(),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            ListTile(
-              title: const Text('Your Level'),
-              subtitle: const Text('Bradipo'),
-              leading: const ImageIcon(
-                          AssetImage("assets/images/level-up.png"),
-                          color: Palette.black,
-                          size: 30,
-                      ),
-              trailing: Icon(Icons.arrow_forward),
-              tileColor: Palette.mainColorShade,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+                trailing: Icon(Icons.arrow_forward),
+                tileColor: Palette.mainColorShade,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            ListTile(
-              title: const Text('Your Achievements'),
-              leading: const ImageIcon(
-                          AssetImage("assets/images/medal.png"),
-                          color: Palette.black,
-                          size: 30,
-                      ),
-              trailing: Icon(Icons.arrow_forward),
-              tileColor: Palette.mainColorShade,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+              const SizedBox(
+                height: 20,
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            ListTile(
-              title: const Text('Your Reward'),
-              leading: Icon(Icons.sanitizer_rounded),
-              trailing: Icon(Icons.arrow_forward),
-              tileColor: Palette.mainColorShade,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+              ListTile(
+                title: const Text('Your Achievements'),
+                leading: const ImageIcon(
+                  AssetImage("assets/images/medal.png"),
+                  color: Palette.black,
+                  size: 30,
+                ),
+                trailing: Icon(Icons.arrow_forward),
+                tileColor: Palette.mainColorShade,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: Palette.tertiaryColor),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    fullscreenDialog: true,
-                    builder: (context) => EditprofilePage(),
-                  ),
-                ).then((value) {
-                  // Aggiorna i dati quando si torna da Edit Profile
-                  loadSavedValues();
-                });
-              },
-              child: const Text("Edit Profile"),
-            ),
-          ],
+              const SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: Palette.tertiaryColor),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      fullscreenDialog: true,
+                      builder: (context) => EditprofilePage(),
+                    ),
+                  ).then((value) {
+                    // Aggiorna i dati quando si torna da Edit Profile
+                    loadSavedValues();
+                  });
+                },
+                child: const Text("Edit Profile"),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -205,5 +199,4 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     ]);
   } //imageProfile
-
 } // _ProfilePageState
