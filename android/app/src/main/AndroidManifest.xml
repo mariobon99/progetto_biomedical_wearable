@@ -1,5 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.progetto_wearable">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- if you want to continue receiving updates even when your App is running in the background -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
    <application
         android:label="progetto_wearable"
         android:name="${applicationName}"
