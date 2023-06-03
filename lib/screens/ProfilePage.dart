@@ -20,20 +20,14 @@ class _ProfilePageState extends State<ProfilePage> {
   String? password;
   int? age;
 
-  /*var _image;
+  File? _image;
   var imagePicker;
-  var type;
-
-  @override
-  void initState() {
-    super.initState();
-    imagePicker = ImagePicker();
-  }*/
 
   @override
   void initState() {
     super.initState();
     loadSavedValues();
+    imagePicker = ImagePicker();
   }
 
   Future<void> loadSavedValues() async {
@@ -42,64 +36,23 @@ class _ProfilePageState extends State<ProfilePage> {
       username = prefs.getString('username');
       password = prefs.getString('password');
       age = prefs.getInt('age');
+      if (prefs.getString('image') != null) {
+        _image = File(prefs.getString('image')!);
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Palette.bgColor,
       appBar: AppBar(title: const Text('$routename')),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
+      body: SingleChildScrollView(
         child: Column(
           children: [
             Stack(
               alignment: Alignment.topCenter,
               children: <Widget>[
-                /*SizedBox(
-                height: 52,
-      
-              ),
-              Center(
-                child: GestureDetector(
-                  onTap: () async {
-                    var source = ImageSource.camera;
-          
-                    XFile image = await imagePicker.pickImage(
-                        source: source,
-                        imageQuality: 50,
-                        preferredCameraDevice: CameraDevice.front);
-                    setState(() {
-                      _image = File(image.path);
-                    });
-                  },
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(color: Colors.red[200]),
-                    child: _image != null
-                        ? CircleAvatar(
-                          radius: 90.0,
-                          
-                          child: Image.file(
-                              _image,
-                              width: 200.0,
-                              height: 200.0,
-                              fit: BoxFit.fill,
-                            ),
-                        )
-                        : Container(
-                            decoration: BoxDecoration(color: Colors.red[200]),
-                            width: 200,
-                            height: 200,
-                            child: Icon(
-                              Icons.camera_alt,
-                              color: Colors.grey[800],
-                            ),
-                          ),
-                  ),
-                ),
-              ),*/
                 Container(
                   margin: const EdgeInsets.only(top: 90.0),
                   width: double.infinity,
@@ -112,16 +65,18 @@ class _ProfilePageState extends State<ProfilePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 55, bottom: 0, left: 10, right: 10),
+                          padding: EdgeInsets.only(
+                              top: 70, bottom: 0, left: 10, right: 10),
                           child: Column(
                             children: <Widget>[
                               const Text("Username",
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                               Text("$username"),
                               const SizedBox(height: 20),
                               const Text("Email",
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                               Text("marzia@gmail.com"),
                               const SizedBox(height: 20),
                             ],
@@ -170,6 +125,15 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(
               height: 20,
             ),
+            ListTile(
+              title: const Text('Your Reward'),
+              leading: Icon(Icons.sanitizer_rounded),
+              trailing: Icon(Icons.arrow_forward),
+              tileColor: Palette.mainColorShade,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(primary: Palette.tertiaryColor),
               onPressed: () {
@@ -194,26 +158,48 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _imageProfile() {
     return Stack(children: <Widget>[
-      const CircleAvatar(
-        radius: 72.0,
+      CircleAvatar(
+        radius: 82.0,
         backgroundColor: Colors.black,
         child: CircleAvatar(
-          radius: 70.0,
-          backgroundImage: AssetImage("assets/images/screenUser.png"),
+          radius: 80.0,
+          backgroundImage: _image == null
+              ? AssetImage("assets/images/screenUser.png")
+              : Image.file(
+                  _image!,
+                  width: 200.0,
+                  height: 200.0,
+                  fit: BoxFit.cover,
+                ).image,
         ),
       ),
       Positioned(
         bottom: 5,
         right: 16,
-        child: Container(
-          padding: const EdgeInsets.all(5.0),
-          decoration: BoxDecoration(
-            color: Palette.tertiaryColor,
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.camera_alt,
-            color: Colors.white,
+        child: GestureDetector(
+          onTap: () async {
+            var source = ImageSource.camera;
+
+            XFile image = await imagePicker.pickImage(
+                source: source,
+                imageQuality: 50,
+                preferredCameraDevice: CameraDevice.front);
+            final sp = await SharedPreferences.getInstance();
+            await sp.setString('image', image.path);
+            setState(() {
+              _image = File(image.path);
+            });
+          },
+          child: Container(
+            padding: EdgeInsets.all(5.0),
+            decoration: const BoxDecoration(
+              color: Colors.black,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.camera_alt,
+              color: Colors.white,
+            ),
           ),
         ),
       ),
@@ -221,4 +207,3 @@ class _ProfilePageState extends State<ProfilePage> {
   } //imageProfile
 
 } // _ProfilePageState
-

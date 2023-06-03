@@ -5,7 +5,7 @@ import 'package:progetto_wearable/screens/RegisterPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:progetto_wearable/services/impactService.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-
+import '../utils/palette.dart';
 //import 'package:flutter_login/theme.dart';
 
 class LoginPage extends StatelessWidget {
@@ -25,15 +25,20 @@ class LoginPage extends StatelessWidget {
     final tokenManager = TokenManager();
 
     return Scaffold(
+        backgroundColor: Palette.bgColor,
         appBar: AppBar(
           title: Text(LoginPage.routename),
           centerTitle: true,
         ),
-        body: Center(
+        body: SingleChildScrollView(
           child: Column(
             // crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Image.asset(
+                'assets/images/app_logo.png',
+                height: 200,
+              ),
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: TextFormField(

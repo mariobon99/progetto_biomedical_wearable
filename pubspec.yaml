@@ -31,6 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  geolocator: ^8.2.0
+
   #flutter_pw_validator: ^1.5.0
   shared_preferences: ^2.0.0
   http: ^0.13.6
@@ -76,7 +78,7 @@ flutter:
   - assets/images/medal.png
   - assets/images/level-up.png
   - assets/images/ImpactLogo.png
-
+  - assets/images/app_logo.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
