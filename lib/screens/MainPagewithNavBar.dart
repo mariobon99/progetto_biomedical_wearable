@@ -101,7 +101,7 @@ class _MainPageState extends State<MainPage> {
                   text: 'Advices',
                 ),
                 GButton(
-                  icon: LineIcons.personEnteringBooth,
+                  icon: LineIcons.users,
                   text: 'Community',
                 ),
               ],

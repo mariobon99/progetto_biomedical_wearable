@@ -14,8 +14,13 @@ class TokenManager {
     final url = Impact.baseUrl + Impact.pingEndpoint;
     print('Calling: $url');
     final response = await http.get(Uri.parse(url));
-    return response.statusCode == 200;
+    if (response.statusCode == 200){
+      return true;
+    } else {
+        return false;
+    }
   }
+
 
   Future<int> getAndStoreTokens() async {
     //creo la richiesta

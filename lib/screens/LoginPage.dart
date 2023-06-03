@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:progetto_wearable/screens/LoginImpactPage.dart';
 import 'package:progetto_wearable/screens/MainPagewithNavBar.dart';
 import 'package:progetto_wearable/screens/RegisterPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:progetto_wearable/services/impactService.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import '../utils/palette.dart';
 //import 'package:flutter_login/theme.dart';
 
@@ -20,6 +22,8 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tokenManager = TokenManager();
+
     return Scaffold(
         backgroundColor: Palette.bgColor,
         appBar: AppBar(
@@ -68,7 +72,7 @@ class LoginPage extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: ElevatedButton(
                   child: Row(
-                    children: [
+                    children: const [
                       Icon(
                         Icons.login,
                         size: 15,
@@ -77,7 +81,7 @@ class LoginPage extends StatelessWidget {
                       SizedBox(
                         width: 5,
                       ),
-                      const Text(
+                      Text(
                         'Login',
                       )
                     ],
@@ -86,6 +90,11 @@ class LoginPage extends StatelessWidget {
                     final sp = await SharedPreferences.getInstance();
                     final username = sp.getString('username');
                     final password = sp.getString('password');
+
+                    //prendo il refresh dalle shared preferences, se non c'è allora mi ritorna null
+                    final refresh= sp.getString('refresh');
+                    //final access= sp.getString('access'); Usato per Debug: usato per vedere se dopo 5 min quando access scatudo mi rimanda al login impact
+              
                     if (username == null || password == null) {
                       ScaffoldMessenger.of(context)
                         ..clearSnackBars()
@@ -97,10 +106,28 @@ class LoginPage extends StatelessWidget {
                       if (usernameController.text == username &&
                           passwordController.text == password) {
                         clearText();
-                        Navigator.pushReplacement(
+                        if(refresh == null){
+                          //primo accesso dell'utente,  non ho ancora nulla nelle shared preferences
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const MainPage()));
+                                builder: (context) =>  LoginImpactPage()));
+                        } else {
+                          //refresh salvato, controllo se valido
+                           if(JwtDecoder.isExpired(refresh as String)){
+                              //se refresh scaduto lo rimando al login impact in cui poi viene generato nuono JWT
+                              Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>  LoginImpactPage()));
+                           } else {
+                            // refresh valido lo mando a home
+                            Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MainPage()));
+                           }
+                        }
                       } else {
                         ScaffoldMessenger.of(context)
                           ..clearSnackBars()
@@ -145,6 +172,8 @@ class LoginPage extends StatelessWidget {
                     final sp = await SharedPreferences.getInstance();
                     await sp.remove('username');
                     await sp.remove('password');
+                    await sp.remove('access');
+                    await sp.remove('refresh');
                   },
                   child: Text('DEBUG:Empty shared preferences'))
             ],

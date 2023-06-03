@@ -95,7 +95,27 @@ class _ProfilePageState extends State<ProfilePage> {
             ListTile(
               title: const Text('Your Level'),
               subtitle: const Text('Bradipo'),
-              leading: Icon(Icons.sanitizer_rounded),
+              leading: const ImageIcon(
+                          AssetImage("assets/images/level-up.png"),
+                          color: Palette.black,
+                          size: 30,
+                      ),
+              trailing: Icon(Icons.arrow_forward),
+              tileColor: Palette.mainColorShade,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ListTile(
+              title: const Text('Your Achievements'),
+              leading: const ImageIcon(
+                          AssetImage("assets/images/medal.png"),
+                          color: Palette.black,
+                          size: 30,
+                      ),
               trailing: Icon(Icons.arrow_forward),
               tileColor: Palette.mainColorShade,
               shape: RoundedRectangleBorder(
@@ -185,4 +205,5 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     ]);
   } //imageProfile
+
 } // _ProfilePageState
