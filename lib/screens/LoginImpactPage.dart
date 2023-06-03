@@ -15,9 +15,10 @@ class LoginImpactPage extends StatelessWidget {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
-   Future<void> saveUsernameImpact(String usernameImpact) async {
+  Future<void> saveUsernameImpact(String usernameImpact) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('usernameImpact', usernameImpact); //save string ('username'=key, username= value)
+    await prefs.setString('usernameImpact',
+        usernameImpact); //save string ('username'=key, username= value)
   }
 
   Future<void> savePasswordImpact(String passwordImpact) async {
@@ -89,7 +90,7 @@ class LoginImpactPage extends StatelessWidget {
                         width: 5,
                       ),
                       const Text(
-                        'Login',
+                        'Authorize',
                       )
                     ],
                   ),
@@ -113,35 +114,37 @@ class LoginImpactPage extends StatelessWidget {
                           duration: Duration(seconds: 2),
                         ));
                     } else {
-                      if (tokenManager.isBackendUp()== false){
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LoginPage()));
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('IMPACT backend is down! Please try later '),
-                          duration: Duration(seconds: 2),
-                           ),
-                        ); //ScaffoldMessenger
-                      } else {
-                      if (usernameImpact == Impact.username &&
-                          passwordImpact == Impact.password) {
-                        clearText();
-                        tokenManager.getAndStoreTokens();
+                      if (tokenManager.isBackendUp() == false) {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const MainPage()));
-                      } else {
-                        ScaffoldMessenger.of(context)
-                          ..clearSnackBars()
-                          ..showSnackBar(const SnackBar(
-                            content: Text('Wrong credentials'),
+                                builder: (context) => LoginPage()));
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'IMPACT backend is down! Please try later '),
                             duration: Duration(seconds: 2),
-                          ));
+                          ),
+                        ); //ScaffoldMessenger
+                      } else {
+                        if (usernameImpact == Impact.username &&
+                            passwordImpact == Impact.password) {
+                          clearText();
+                          tokenManager.getAndStoreTokens();
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const MainPage()));
+                        } else {
+                          ScaffoldMessenger.of(context)
+                            ..clearSnackBars()
+                            ..showSnackBar(const SnackBar(
+                              content: Text('Wrong credentials'),
+                              duration: Duration(seconds: 2),
+                            ));
+                        }
                       }
-                    }
                     }
                   },
                 ),
