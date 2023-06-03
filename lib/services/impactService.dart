@@ -78,6 +78,13 @@ class TokenManager {
     //Get the stored access token (Note that this code does not work if the tokens are null)
     final sp = await SharedPreferences.getInstance();
     var access = sp.getString('access');
+    var refresh = sp.getString('refresh');
+
+    // If refresh token is expired, relog
+    if (JwtDecoder.isExpired(access!)) {
+      await getAndStoreTokens();
+      access = sp.getString('access');
+    }
 
     //If access token is expired, refresh it
     if (JwtDecoder.isExpired(access!)) {
@@ -85,8 +92,7 @@ class TokenManager {
       access = sp.getString('access');
     } //if
 
-    // request for for weeks
-    // ignore: dead_code
+    // request of the data for multiple weeks
     for (var n = 0; n < 2; n++) {
       final startday =
           CustomDate(date: DateTime.now().subtract(Duration(days: 8 + 7 * n)))
@@ -104,7 +110,6 @@ class TokenManager {
       //Get the response
       print('Calling: $url');
       final response = await http.get(Uri.parse(url), headers: headers);
-      print(response.statusCode);
       //if OK parse the response, otherwise return null
       if (response.statusCode == 200) {
         var decodedResponse = jsonDecode(response.body);
@@ -123,7 +128,6 @@ class TokenManager {
       } // if
       //Return the result
     }
-    print(result);
     return result; //_requestData
   }
 }// TokenManager
