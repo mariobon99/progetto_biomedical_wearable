@@ -3,9 +3,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:progetto_wearable/utils/palette.dart';
 import 'dart:async';
 import 'package:progetto_wearable/utils/placeToVisit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PlacePage extends StatefulWidget {
-  const PlacePage({Key? key}) : super(key: key);
+  Function? onPageChange;
+  PlacePage({Key? key, required this.onPageChange}) : super(key: key);
 
   static const routename = 'PlacePage';
 
@@ -16,15 +18,16 @@ class PlacePage extends StatefulWidget {
 class PlacePageState extends State<PlacePage> {
   Position? _currentUserPosition;
   double? distanceImMeter = 0.0;
-  Data data = Data();
-  StreamSubscription<Position>? positionStream;
+  Locations locations = Locations();
 
   @override
   void dispose() {
     super.dispose();
+  }
 
-    /// don't forget to cancel stream once no longer needed
-    positionStream?.cancel();
+  void _changePage() {
+    // Call the callback function to switch to page one (index 0)
+    widget.onPageChange!(0);
   }
 
   /// Determine the current position of the device
@@ -76,14 +79,13 @@ class PlacePageState extends State<PlacePage> {
 
   Future _getTheDistance() async {
     _determinePosition();
-    _currentUserPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    _currentUserPosition = await Geolocator.getCurrentPosition();
 
-    for (int i = 0; i < data.allplaces.length; i++) {
-      double storelat = data.allplaces[i]['latitudine'];
-      double storelng = data.allplaces[i]['longitudine'];
+    for (int i = 0; i < locations.allplaces.length; i++) {
+      double storelat = locations.allplaces[i]['latitudine'];
+      double storelng = locations.allplaces[i]['longitudine'];
 
-      distanceImMeter = await Geolocator.distanceBetween(
+      distanceImMeter = Geolocator.distanceBetween(
         _currentUserPosition!.latitude,
         _currentUserPosition!.longitude,
         storelat,
@@ -92,9 +94,9 @@ class PlacePageState extends State<PlacePage> {
       var distance = distanceImMeter?.toDouble();
 
       if (distance != null && distance > 1000) {
-        data.allplaces[i]['distance'] = (distance / 1000);
+        locations.allplaces[i]['distance'] = (distance / 1000);
       } else {
-        data.allplaces[i]['distance'] = (distance!);
+        locations.allplaces[i]['distance'] = (distance!);
       }
       setState(() {});
     }
@@ -106,71 +108,85 @@ class PlacePageState extends State<PlacePage> {
     super.initState();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
+  Widget _placeTile(place) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-      child: GridView.builder(
-          itemCount: data.allplaces.length,
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 200,
-            childAspectRatio: 3 / 3,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-          ),
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                ScaffoldMessenger.of(context)
-                  ..removeCurrentSnackBar()
-                  ..showSnackBar(SnackBar(
-                      content: Text(
-                          'Hai selezionato ${data.allplaces[index]['name']}')));
-              },
-              child: Container(
-                color: Palette.tertiaryColor,
-                height: height * 0.9,
-                width: width * 0.3,
+      padding: const EdgeInsets.all(2.0),
+      child: GestureDetector(
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Start activity?'),
+              content: Text('You selected ${place['name']}. Continue?'),
+              actions: [
+                TextButton(
+                    onPressed: () async {
+                      final sp = await SharedPreferences.getInstance();
+                      await sp.setString('selected place', place['name']);
+                      _changePage();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Yes')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('No'))
+              ],
+            ),
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [Palette.mainColor, Palette.mainColorShade]),
+              borderRadius: BorderRadius.circular(5)),
+          height: 100,
+          child: Row(
+            children: [
+              SizedBox(
+                width: 5,
+              ),
+              Container(
+                height: 92,
+                width: 100,
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                child: Image.network(
+                  place['image'],
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Flexible(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      height: height * 0.13,
-                      width: width,
-                      child: Image.network(
-                        data.allplaces[index]['image'],
-                        fit: BoxFit.fill,
-                      ),
-                    ),
                     SizedBox(
-                      height: 5,
+                      height: 10,
                     ),
                     FittedBox(
+                      fit: BoxFit.fitWidth,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        padding: const EdgeInsets.all(2.0),
                         child: Text(
-                          data.allplaces[index]['name'],
+                          place['name'],
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Palette.white,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      //mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.location_on),
-                        //if (data.allplaces[index]['distance'] < 1000)
+                        //if (locations.allplaces[index]['distance'] < 1000)
                         //devo sistemare bene tra metri e chilometri
 
                         Text(
-                          "${data.allplaces[index]['distance'].round()} KM Away",
+                          "${place['distance'].toStringAsFixed(2)} KM Away",
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
@@ -182,7 +198,21 @@ class PlacePageState extends State<PlacePage> {
                   ],
                 ),
               ),
-            );
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+      child: ListView.builder(
+          itemCount: locations.allplaces.length,
+          itemBuilder: (context, index) {
+            return _placeTile(locations.allplaces[index]);
           }),
     );
   }

@@ -1,4 +1,4 @@
-class Data {
+class Locations {
   List allplaces = [
     {
       "name": "Prato Della Valle",

@@ -4,9 +4,9 @@ import 'package:line_icons/line_icons.dart';
 import 'package:progetto_wearable/utils/palette.dart';
 
 class CommunityPage extends StatelessWidget {
-  const CommunityPage({Key? key}) : super(key: key);
+  CommunityPage({Key? key}) : super(key: key);
 
-  static const routename = 'CommunityPage';
+  String get routename => 'Useful advice';
 
   @override
   Widget build(BuildContext context) {

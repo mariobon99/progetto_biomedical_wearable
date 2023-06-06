@@ -18,8 +18,8 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
-  List screens = [HomePage(), PlacePage(), AdvisePage(), CommunityPage()];
   List<String> titles = ['Home', 'Place finder', 'Useful advices', 'Community'];
+  List<Widget> screens = [];
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,21 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
-      body: screens[_selectedIndex],
+      body: IndexedStack(
+        children: [
+          HomePage(),
+          PlacePage(
+            onPageChange: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+          ),
+          AdvisePage(),
+          CommunityPage()
+        ],
+        index: _selectedIndex,
+      ),
       drawer: Drawer(
           child: ListView(
         children: [

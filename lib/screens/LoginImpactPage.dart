@@ -75,24 +75,24 @@ class LoginImpactPage extends StatelessWidget {
                 ),
               ),
               Container(
-                width: 130,
-                height: 50,
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                width: 110,
                 child: ElevatedButton(
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.login,
-                        size: 15,
-                        //color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      const Text(
-                        'Authorize',
-                      )
-                    ],
+                  child: Center(
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.login,
+                          size: 15,
+                          //color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        const Text(
+                          'Authorize',
+                        )
+                      ],
+                    ),
                   ),
                   onPressed: () async {
                     await saveUsernameImpact(usernameController.text);

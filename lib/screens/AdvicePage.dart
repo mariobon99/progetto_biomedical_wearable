@@ -5,6 +5,7 @@ import '../services/impactService.dart';
 
 class AdvisePage extends StatefulWidget {
   const AdvisePage({super.key});
+  String get routename => 'Useful advice';
 
   @override
   State<AdvisePage> createState() => _AdvisePageState();

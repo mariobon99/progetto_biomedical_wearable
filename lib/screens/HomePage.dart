@@ -1,74 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:progetto_wearable/services/impactService.dart';
+import 'package:progetto_wearable/utils/palette.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+  //static const routename = 'HomePage';
+  String get routename => 'Homepage';
 
-  static const routename = 'HomePage';
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  Widget? place;
+  bool showPlace = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _setPlaceFromSP();
+  }
+
+  void _setPlaceFromSP() async {
+    final sp = await SharedPreferences.getInstance();
+    String? placeName = sp.getString('selected place');
+    if (placeName != null) {
+      setState(() {
+        showPlace = true;
+        place = Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Palette.mainColorShade),
+            height: 150,
+            width: 250,
+            child: Center(
+                child: Column(
+              children: [
+                CircularProgressIndicator(
+                  color: Palette.mainColor,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                FittedBox(
+                  child: Text('$placeName in progress',
+                      style: TextStyle(
+                        fontSize: 30,
+                        color: Palette.black,
+                        fontWeight: FontWeight.bold,
+                      )),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Text(
+                  'Click to stop',
+                  style: TextStyle(color: Palette.mainColor, fontSize: 20),
+                )
+              ],
+            )));
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    //return const Center(child: Text('HomePage'));
-    // creo uninstanza di tokenManager
-    final tokenManager = TokenManager();
-
+    _setPlaceFromSP();
     return Center(
-        child: Column(
-      children: [
-        ElevatedButton(
-          onPressed: () async {
-            final result = await tokenManager.isBackendUp();
-            final message =
-                result ? 'IMPACT backend is up!' : 'IMPACT backend is down!';
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(message)));
+      child: GestureDetector(
+          onTap: () {
+            if (showPlace) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Stop activity?'),
+                  content: Text(
+                      'The current activity will be stopped before completion. No points will be gained. Continue?'),
+                  actions: [
+                    TextButton(
+                        onPressed: () async {
+                          final sp = await SharedPreferences.getInstance();
+                          sp.remove('selected place');
+                          setState(() {
+                            showPlace = false;
+                          });
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Yes')),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('No'))
+                  ],
+                ),
+              );
+            }
           },
-          child: Text('DEBUG:Ping IMPACT'),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            final result = await tokenManager.getAndStoreTokens();
-            final message =
-                result == 200 ? 'Request successful' : 'Request failed';
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(message)));
-          },
-          child: Text('DEBUG:Get tokens'),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            final sp = await SharedPreferences.getInstance();
-            final refresh = sp.getString('refresh');
-            final message;
-            if (refresh == null) {
-              message = 'No stored tokens';
-            } else {
-              final result = await tokenManager.refreshTokens();
-              message = result == 200 ? 'Request successful' : 'Request failed';
-            } //if-else
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(message)));
-          },
-          child: Text('DEBUG:Refresh tokens'),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            final access = await tokenManager.getAccessToken();
-            final refresh = await tokenManager.getRefreshToken();
-            final message = access == null
-                ? 'No stored tokens'
-                : 'access: $access; refresh: $refresh';
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(message)));
-          },
-          child: Text('DEBUG:Print tokens'),
-        )
-      ],
-    ));
+          child: showPlace ? place : Text('No place selected. Choose one')),
+    );
   }
 }
