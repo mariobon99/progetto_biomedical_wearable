@@ -19,6 +19,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String? username;
   String? password;
   int? age;
+  String? email;
 
   File? _image;
   var imagePicker;
@@ -35,6 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       username = prefs.getString('username');
       password = prefs.getString('password');
+      email = prefs.getString('mail');
       age = prefs.getInt('age');
       if (prefs.getString('image') != null) {
         _image = File(prefs.getString('image')!);
@@ -79,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 const Text("Email",
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
-                                Text("marzia@gmail.com"),
+                                Text("$email"),
                                 const SizedBox(height: 20),
                               ],
                             ),

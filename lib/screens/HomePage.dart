@@ -18,8 +18,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    super.initState();
     _setPlaceFromSP();
+    super.initState();
   }
 
   void _setPlaceFromSP() async {
@@ -62,12 +62,15 @@ class _HomePageState extends State<HomePage> {
               ],
             )));
       });
+    } else {
+      setState(() {
+        place = Text('No place selected. Choose one');
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    _setPlaceFromSP();
     return Center(
       child: GestureDetector(
           onTap: () {
@@ -83,9 +86,7 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () async {
                           final sp = await SharedPreferences.getInstance();
                           sp.remove('selected place');
-                          setState(() {
-                            showPlace = false;
-                          });
+                          _setPlaceFromSP();
                           Navigator.of(context).pop();
                         },
                         child: const Text('Yes')),
@@ -99,7 +100,7 @@ class _HomePageState extends State<HomePage> {
               );
             }
           },
-          child: showPlace ? place : Text('No place selected. Choose one')),
+          child: place),
     );
   }
 }

@@ -38,24 +38,36 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
-      body: IndexedStack(
-        children: [
-          HomePage(),
-          PlacePage(
-            onPageChange: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-          ),
-          AdvisePage(),
-          CommunityPage()
-        ],
-        index: _selectedIndex,
-      ),
+      body: [
+        const HomePage(),
+        PlacePage(
+          onPageChange: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+        ),
+        const AdvisePage(),
+        CommunityPage()
+      ][_selectedIndex],
       drawer: Drawer(
           child: ListView(
         children: [
+          Container(
+            decoration: const BoxDecoration(
+              color: Palette.mainColor,
+              image: DecorationImage(
+                  image: AssetImage('assets/images/drawer_image.jpg'),
+                  fit: BoxFit.fill,
+                  opacity: 0.8),
+            ),
+            child: const DrawerHeader(
+              child: Text(
+                'Sustainable Padua',
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
           ListTile(
               title: const Text('Profile'),
               trailing: const Icon(LineIcons.userCircle),
@@ -76,6 +88,12 @@ class _MainPageState extends State<MainPage> {
                       builder: (context) => LoginPage(),
                     ));
               }),
+          ListTile(
+            title: const Text('Settings'),
+            trailing: const Icon(Icons.settings),
+            onTap: () {},
+          ),
+          Text('Version 1.0')
         ],
       )),
       bottomNavigationBar: Container(

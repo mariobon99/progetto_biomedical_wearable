@@ -17,12 +17,12 @@ class PlacePage extends StatefulWidget {
 
 class PlacePageState extends State<PlacePage> {
   Position? _currentUserPosition;
-  double? distanceImMeter = 0.0;
   Locations locations = Locations();
 
   @override
-  void dispose() {
-    super.dispose();
+  void initState() {
+    super.initState();
+    _getTheDistance();
   }
 
   void _changePage() {
@@ -31,7 +31,7 @@ class PlacePageState extends State<PlacePage> {
   }
 
   /// Determine the current position of the device
-  void _determinePosition() async {
+  Future<void> _determinePosition() async {
     // Test if location services are enabled.
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -78,34 +78,23 @@ class PlacePageState extends State<PlacePage> {
   }
 
   Future _getTheDistance() async {
-    _determinePosition();
-    _currentUserPosition = await Geolocator.getCurrentPosition();
+    await _determinePosition();
+    //_currentUserPosition = await Geolocator.getCurrentPosition();
 
     for (int i = 0; i < locations.allplaces.length; i++) {
       double storelat = locations.allplaces[i]['latitudine'];
       double storelng = locations.allplaces[i]['longitudine'];
 
-      distanceImMeter = Geolocator.distanceBetween(
+      double? distance = Geolocator.distanceBetween(
         _currentUserPosition!.latitude,
         _currentUserPosition!.longitude,
         storelat,
         storelng,
       );
-      var distance = distanceImMeter?.toDouble();
-
-      if (distance != null && distance > 1000) {
+      setState(() {
         locations.allplaces[i]['distance'] = (distance / 1000);
-      } else {
-        locations.allplaces[i]['distance'] = (distance!);
-      }
-      setState(() {});
+      });
     }
-  }
-
-  @override
-  void initState() {
-    _getTheDistance();
-    super.initState();
   }
 
   Widget _placeTile(place) {
@@ -155,6 +144,20 @@ class PlacePageState extends State<PlacePage> {
                 child: Image.network(
                   place['image'],
                   fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    } else {
+                      return Center(
+                        child: Container(
+                            padding: EdgeInsets.all(20),
+                            height: 70,
+                            width: 70,
+                            color: Palette.white,
+                            child: CircularProgressIndicator()),
+                      );
+                    }
+                  },
                 ),
               ),
               Flexible(

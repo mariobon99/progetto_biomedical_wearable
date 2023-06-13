@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:progetto_wearable/screens/LoginImpactPage.dart';
 import 'package:progetto_wearable/screens/MainPagewithNavBar.dart';
 import 'package:progetto_wearable/screens/RegisterPage.dart';
+import 'package:progetto_wearable/widgets/customSnackBar.dart';
 import 'package:progetto_wearable/widgets/loginImageButton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:progetto_wearable/services/impactService.dart';
@@ -97,12 +98,7 @@ class LoginPage extends StatelessWidget {
                     //final access= sp.getString('access'); Usato per Debug: usato per vedere se dopo 5 min quando access scatudo mi rimanda al login impact
 
                     if (username == null || password == null) {
-                      ScaffoldMessenger.of(context)
-                        ..clearSnackBars()
-                        ..showSnackBar(const SnackBar(
-                          content: Text('Register'),
-                          duration: Duration(seconds: 2),
-                        ));
+                      CustomSnackBar(context: context, message: 'Register');
                     } else {
                       if (usernameController.text == username &&
                           passwordController.text == password) {
@@ -115,7 +111,7 @@ class LoginPage extends StatelessWidget {
                                   builder: (context) => LoginImpactPage()));
                         } else {
                           //refresh salvato, controllo se valido
-                          if (JwtDecoder.isExpired(refresh as String)) {
+                          if (JwtDecoder.isExpired(refresh)) {
                             //se refresh scaduto lo rimando al login impact in cui poi viene generato nuono JWT
                             Navigator.pushReplacement(
                                 context,
@@ -130,12 +126,8 @@ class LoginPage extends StatelessWidget {
                           }
                         }
                       } else {
-                        ScaffoldMessenger.of(context)
-                          ..clearSnackBars()
-                          ..showSnackBar(const SnackBar(
-                            content: Text('Wrong credentials'),
-                            duration: Duration(seconds: 2),
-                          ));
+                        CustomSnackBar(
+                            context: context, message: 'Wrong credentials');
                       }
                     }
                   },
@@ -154,12 +146,9 @@ class LoginPage extends StatelessWidget {
                           MaterialPageRoute(
                               builder: (context) => RegisterPage()));
                     } else {
-                      ScaffoldMessenger.of(context)
-                        ..clearSnackBars()
-                        ..showSnackBar(const SnackBar(
-                          content: Text('Already registered, login'),
-                          duration: Duration(seconds: 2),
-                        ));
+                      CustomSnackBar(
+                          context: context,
+                          message: 'Already registered, login');
                     }
                   },
                   child: Text(
