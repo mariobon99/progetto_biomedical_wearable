@@ -51,49 +51,61 @@ class _MainPageState extends State<MainPage> {
         CommunityPage()
       ][_selectedIndex],
       drawer: Drawer(
-          child: ListView(
+          child: Column(
         children: [
+          Expanded(
+            child: ListView(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Palette.mainColor,
+                    image: DecorationImage(
+                        image: AssetImage('assets/images/drawer_image.jpg'),
+                        fit: BoxFit.fill,
+                        opacity: 0.8),
+                  ),
+                  child: const DrawerHeader(
+                    child: Text(
+                      'Sustainable Padua',
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                ListTile(
+                    title: const Text('Profile'),
+                    trailing: const Icon(LineIcons.userCircle),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfilePage(),
+                          ));
+                    }),
+                ListTile(
+                    title: const Text('Logout'),
+                    trailing: const Icon(Icons.logout),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginPage(),
+                          ));
+                    }),
+                ListTile(
+                  title: const Text('Settings'),
+                  trailing: const Icon(Icons.settings),
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
           Container(
-            decoration: const BoxDecoration(
-              color: Palette.mainColor,
-              image: DecorationImage(
-                  image: AssetImage('assets/images/drawer_image.jpg'),
-                  fit: BoxFit.fill,
-                  opacity: 0.8),
-            ),
-            child: const DrawerHeader(
-              child: Text(
-                'Sustainable Padua',
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          ListTile(
-              title: const Text('Profile'),
-              trailing: const Icon(LineIcons.userCircle),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfilePage(),
-                    ));
-              }),
-          ListTile(
-              title: const Text('Logout'),
-              trailing: const Icon(Icons.logout),
-              onTap: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginPage(),
-                    ));
-              }),
-          ListTile(
-            title: const Text('Settings'),
-            trailing: const Icon(Icons.settings),
-            onTap: () {},
-          ),
-          Text('Version 1.0')
+              alignment: Alignment.bottomCenter,
+              child: Text('Version 1.0 powered by MND Group\u00AE')),
+          SizedBox(
+            height: 20,
+          )
         ],
       )),
       bottomNavigationBar: Container(

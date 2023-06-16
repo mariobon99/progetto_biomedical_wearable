@@ -42,14 +42,18 @@ class LoginImpactPage extends StatelessWidget {
           title: Text(LoginImpactPage.routename),
           centerTitle: true,
         ),
-        body: SingleChildScrollView(
-          child: Center(
+        body: Center(
+          child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const ClipRRect(
-                  child:
-                      Image(image: AssetImage('assets/images/ImpactLogo.png')),
+                Container(
+                  width: 300,
+                  child: const Image(
+                      fit: BoxFit.contain,
+                      isAntiAlias: false,
+                      filterQuality: FilterQuality.high,
+                      image: AssetImage('assets/images/ImpactLogo.png')),
                 ),
                 Container(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -123,13 +127,6 @@ class LoginImpactPage extends StatelessWidget {
                     },
                   ),
                 ),
-                ElevatedButton(
-                    onPressed: () async {
-                      final sp = await SharedPreferences.getInstance();
-                      await sp.remove('refresh');
-                      await sp.remove('access');
-                    },
-                    child: Text('DEBUG:Empty shared preferences'))
               ],
             ),
           ),

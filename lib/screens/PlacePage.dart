@@ -3,7 +3,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:progetto_wearable/utils/palette.dart';
 import 'dart:async';
 import 'package:progetto_wearable/utils/placeToVisit.dart';
+import 'package:progetto_wearable/widgets/customSnackBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/activity.dart';
+import '../services/impactService.dart';
 
 class PlacePage extends StatefulWidget {
   Function? onPageChange;
@@ -18,10 +22,12 @@ class PlacePage extends StatefulWidget {
 class PlacePageState extends State<PlacePage> {
   Position? _currentUserPosition;
   Locations locations = Locations();
+  double? meanDistance = 100000;
 
   @override
   void initState() {
     super.initState();
+    _getMeanDistance();
     _getTheDistance();
   }
 
@@ -77,7 +83,7 @@ class PlacePageState extends State<PlacePage> {
     });
   }
 
-  Future _getTheDistance() async {
+  Future<void> _getTheDistance() async {
     await _determinePosition();
     //_currentUserPosition = await Geolocator.getCurrentPosition();
 
@@ -97,38 +103,86 @@ class PlacePageState extends State<PlacePage> {
     }
   }
 
+  Future<void> _getMeanDistance() async {
+    final tokenManager = TokenManager();
+    final sp = await SharedPreferences.getInstance();
+    final result = await tokenManager.requestData() as List<Activity>;
+    double resultMean = computeMean(result);
+    sp.setDouble('distance', resultMean);
+    setState(() {
+      meanDistance = resultMean;
+    });
+  }
+
+  double computeMean(List<Activity>? result) {
+    double somma = 0;
+    double totalValidActivities = 0;
+    for (var i = 0; i < result!.length; i++) {
+      if (result[i].finalDistance > 0) {
+        somma += result[i].finalDistance;
+        totalValidActivities += 1;
+      }
+    }
+    return somma / totalValidActivities;
+  }
+
   Widget _placeTile(place) {
+    bool condition = place['distance'] < (meanDistance! / 2);
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: GestureDetector(
-        onTap: () {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text('Start activity?'),
-              content: Text('You selected ${place['name']}. Continue?'),
-              actions: [
-                TextButton(
-                    onPressed: () async {
-                      final sp = await SharedPreferences.getInstance();
-                      await sp.setString('selected place', place['name']);
-                      _changePage();
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Yes')),
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('No'))
-              ],
-            ),
-          );
+        onTap: () async {
+          final sp = await SharedPreferences.getInstance();
+          bool activityInProgress = sp.getString('selected place') != null;
+          if (activityInProgress) {
+            CustomSnackBar(
+                context: context, message: 'Activity already in progress.');
+          } else {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return condition
+                      ? AlertDialog(
+                          title: const Text('Start activity?'),
+                          content:
+                              Text('You selected ${place['name']}. Continue?'),
+                          actions: [
+                            TextButton(
+                                onPressed: () async {
+                                  await sp.setString(
+                                      'selected place', place['name']);
+                                  _changePage();
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Yes')),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('No'))
+                          ],
+                        )
+                      : AlertDialog(
+                          title: const Text('Activity not available'),
+                          content: Text(
+                              'You selected ${place['name']}. Your level is too low to select this destination.'),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Close'))
+                          ],
+                        );
+                });
+          }
         },
         child: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
-                  colors: [Palette.mainColor, Palette.mainColorShade]),
+                  colors: condition
+                      ? [Palette.mainColor, Palette.mainColorShade]
+                      : [Palette.darkGrey, Palette.grey]),
               borderRadius: BorderRadius.circular(5)),
           height: 100,
           child: Row(

@@ -11,7 +11,7 @@ abstract class UsersDao {
   Future<List<User>> findAllUsers();
 
   //Query that allows to insert a new User in the table
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertUser(User user);
 
   //Query that allows to delete a User from the table

@@ -30,6 +30,17 @@ class LoginPage extends StatelessWidget {
         backgroundColor: Palette.bgColor,
         appBar: AppBar(
           title: Text(LoginPage.routename),
+          actions: [
+            IconButton(
+                onPressed: () async {
+                  final sp = await SharedPreferences.getInstance();
+                  await sp.remove('username');
+                  await sp.remove('password');
+                  await sp.remove('access');
+                  await sp.remove('refresh');
+                },
+                icon: Icon(Icons.miscellaneous_services))
+          ],
           centerTitle: true,
         ),
         body: SingleChildScrollView(
@@ -135,6 +146,7 @@ class LoginPage extends StatelessWidget {
               ),
               Container(
                 padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                alignment: Alignment.bottomRight,
                 child: GestureDetector(
                   onTap: () async {
                     final sp = await SharedPreferences.getInstance();
@@ -157,17 +169,8 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
               ),
-              ElevatedButton(
-                  onPressed: () async {
-                    final sp = await SharedPreferences.getInstance();
-                    await sp.remove('username');
-                    await sp.remove('password');
-                    await sp.remove('access');
-                    await sp.remove('refresh');
-                  },
-                  child: Text('DEBUG:Empty shared preferences')),
               SizedBox(
-                height: 20,
+                height: 80,
               ),
               Text('Or register with:'),
               SizedBox(

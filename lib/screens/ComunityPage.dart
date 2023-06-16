@@ -9,7 +9,7 @@ import 'package:progetto_wearable/database/entities/entities.dart';
 class CommunityPage extends StatelessWidget {
   CommunityPage({Key? key}) : super(key: key);
 
-  String get routename => 'Useful advice';
+  String get routename => 'Community';
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +42,11 @@ class CommunityPage extends StatelessWidget {
                                 ],
                               );
                             }),
-                        tileColor: Palette.mainColorShade,
+                        tileColor: user.id == 0
+                            ? Palette.tertiaryColor
+                            : Palette.mainColorShade,
                         title: Text(
-                          user.username,
+                          user.id == 0 ? 'You' : user.username,
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
