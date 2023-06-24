@@ -1,74 +1,172 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:progetto_wearable/services/impactService.dart';
+import 'package:progetto_wearable/utils/palette.dart';
+import 'package:progetto_wearable/utils/placeToVisit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+  //static const routename = 'HomePage';
+  String get routename => 'Homepage';
 
-  static const routename = 'HomePage';
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool showPlace = false;
+  String? _placeName;
+  double? _placeLatitude;
+  double? _placeLongitude;
+  double? _distanceInKM;
+  StreamSubscription<Position>? _positionStreamSubscription;
+  bool _completed = false;
+
+  @override
+  void initState() {
+    _setPlaceFromSP();
+    _getSelectedPlaceCoordinates();
+    _positionStreamSubscription =
+        Geolocator.getPositionStream().listen((Position position) {
+      _updateDistance(position);
+    }, onError: (error) {
+      print(error);
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _positionStreamSubscription!.cancel();
+    super.dispose();
+  }
+
+  void _updateDistance(Position currentPosition) {
+    final double distance = Geolocator.distanceBetween(
+      currentPosition.latitude,
+      currentPosition.longitude,
+      _placeLatitude!,
+      _placeLongitude!,
+    );
+
+    setState(() {
+      _distanceInKM = distance / 1000;
+      if (_distanceInKM! < 0.002) {
+        showPlace = false;
+        _completed = true;
+      }
+    });
+  }
+
+  void _getSelectedPlaceCoordinates() async {
+    final sp = await SharedPreferences.getInstance();
+    String? selectedPlace = sp.getString('selected place');
+    final locations = Locations().allplaces;
+    if (selectedPlace != null) {
+      for (var i = 0; i < locations.length; i++) {
+        if (locations[i]['name'] == selectedPlace) {
+          setState(() {
+            _placeLatitude = locations[i]['latitudine'];
+            _placeLongitude = locations[i]['longitudine'];
+          });
+          break;
+        }
+      }
+    }
+  }
+
+  void _setPlaceFromSP() async {
+    final sp = await SharedPreferences.getInstance();
+    String? placeName = sp.getString('selected place');
+    setState(() {
+      showPlace = (placeName != null);
+      _placeName = placeName;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    //return const Center(child: Text('HomePage'));
-    // creo uninstanza di tokenManager
-    final tokenManager = TokenManager();
-
     return Center(
-        child: Column(
-      children: [
-        ElevatedButton(
-          onPressed: () async {
-            final result = await tokenManager.isBackendUp();
-            final message =
-                result ? 'IMPACT backend is up!' : 'IMPACT backend is down!';
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(message)));
+      child: GestureDetector(
+          onLongPress: () {
+            if (showPlace) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Stop activity?'),
+                  content: Text(
+                      'The current activity will be stopped before completion. No points will be gained. Continue?'),
+                  actions: [
+                    TextButton(
+                        onPressed: () async {
+                          final sp = await SharedPreferences.getInstance();
+                          sp.remove('selected place');
+                          _setPlaceFromSP();
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Yes')),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('No'))
+                  ],
+                ),
+              );
+            }
           },
-          child: Text('DEBUG:Ping IMPACT'),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            final result = await tokenManager.getAndStoreTokens();
-            final message =
-                result == 200 ? 'Request successful' : 'Request failed';
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(message)));
-          },
-          child: Text('DEBUG:Get tokens'),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            final sp = await SharedPreferences.getInstance();
-            final refresh = sp.getString('refresh');
-            final message;
-            if (refresh == null) {
-              message = 'No stored tokens';
-            } else {
-              final result = await tokenManager.refreshTokens();
-              message = result == 200 ? 'Request successful' : 'Request failed';
-            } //if-else
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(message)));
-          },
-          child: Text('DEBUG:Refresh tokens'),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            final access = await tokenManager.getAccessToken();
-            final refresh = await tokenManager.getRefreshToken();
-            final message = access == null
-                ? 'No stored tokens'
-                : 'access: $access; refresh: $refresh';
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(message)));
-          },
-          child: Text('DEBUG:Print tokens'),
-        )
-      ],
-    ));
+          child: Container(
+            padding: EdgeInsets.all(10),
+            alignment: Alignment.center,
+            height: 200,
+            width: 350,
+            decoration: BoxDecoration(
+                color: Palette.mainColorShade,
+                border: Border.all(color: Palette.mainColor),
+                borderRadius: BorderRadius.circular(15)),
+            child: showPlace
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(
+                        color: Palette.mainColor,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      FittedBox(
+                        child: Text('$_placeName in progress',
+                            style: TextStyle(
+                              fontSize: 30,
+                              color: Palette.black,
+                              fontWeight: FontWeight.bold,
+                            )),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Text(
+                        'Distance: ${_distanceInKM?.toStringAsFixed(2) ?? '-'} km',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Text(
+                        'Hold to stop',
+                        style:
+                            TextStyle(color: Palette.mainColor, fontSize: 15),
+                      ),
+                    ],
+                  )
+                : Text(
+                    'No treasure selected, choose one',
+                    style: TextStyle(fontSize: 20),
+                  ),
+          )),
+    );
   }
 }

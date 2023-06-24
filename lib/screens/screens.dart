@@ -1,0 +1,10 @@
+export 'AdvicePage.dart';
+export 'ComunityPage.dart';
+export 'EditProfilePage.dart';
+export 'HomePage.dart';
+export 'LoginImpactPage.dart';
+export 'LoginPage.dart';
+export 'MainPagewithNavBar.dart';
+export 'PlacePage.dart';
+export 'ProfilePage.dart';
+export 'RegisterPage.dart';

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:progetto_wearable/repositories/databaseRepository.dart';
 import 'package:progetto_wearable/screens/LoginPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:progetto_wearable/screens/MainPagewithNavBar.dart';
-//import 'package:flutter_login/theme.dart';
+import 'package:provider/provider.dart';
+import 'package:progetto_wearable/database/entities/entities.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({Key? key}) : super(key: key);
@@ -114,8 +115,23 @@ class RegisterPage extends StatelessWidget {
                       await sp.setString('username', usernameController.text);
                       await sp.setString('password', passwordController.text);
                       await sp.setString('mail', mailController.text);
+
+                      User user = User(0, usernameController.text,
+                          passwordController.text, mailController.text, 1, 0);
+
+                      Provider.of<DatabaseRepository>(context, listen: false)
+                          .insertUser(user);
+
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) => LoginPage()));
+                    } else if (passwordController.text !=
+                        passwordController2.text) {
+                      ScaffoldMessenger.of(context)
+                        ..clearSnackBars()
+                        ..showSnackBar(const SnackBar(
+                          content: Text("The two passwords don't match"),
+                          duration: Duration(seconds: 2),
+                        ));
                     } else {
                       ScaffoldMessenger.of(context)
                         ..clearSnackBars()

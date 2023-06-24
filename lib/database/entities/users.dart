@@ -3,9 +3,9 @@ import 'dart:ffi';
 import 'package:floor/floor.dart';
 
 @Entity(tableName: 'User')
-class User{
-
+class User {
 // id is the PRIMARY KEY for the table User
+  @PrimaryKey(autoGenerate: true)
   final int? id;
 
   final String username;
@@ -20,5 +20,6 @@ class User{
   final double distance;
 
   //Default constructor
-  User(this.id, this.username,this.password,this.email, this.level, this.distance);
+  User(this.id, this.username, this.password, this.email, this.level,
+      this.distance);
 } //User

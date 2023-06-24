@@ -9,4 +9,6 @@ class Palette {
 
   static const black = Colors.black;
   static const white = Colors.white;
+  static const darkGrey = Colors.blueGrey;
+  static const grey = Colors.grey;
 }

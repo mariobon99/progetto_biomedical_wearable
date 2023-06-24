@@ -1,60 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:progetto_wearable/repositories/databaseRepository.dart';
 import 'package:progetto_wearable/utils/palette.dart';
+import 'package:provider/provider.dart';
+import 'package:progetto_wearable/database/entities/entities.dart';
 
 class CommunityPage extends StatelessWidget {
-  const CommunityPage({Key? key}) : super(key: key);
+  CommunityPage({Key? key}) : super(key: key);
 
-  static const routename = 'CommunityPage';
+  String get routename => 'Community';
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Center(
-          child: Container(
-            width: 1000,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [Palette.bgColor, Palette.tertiaryColor],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter)),
-            child: Text(
-              'Hello',
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            color: Palette.tertiaryColor,
-            child: ListView.builder(
-              itemCount: 20,
-              itemBuilder: (context, index) => Card(
-                elevation: 5,
-                child: Dismissible(
-                  key: UniqueKey(),
-                  background: Container(color: Palette.tertiaryColor),
-                  secondaryBackground: Container(color: Palette.black),
-                  child: ListTile(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4)),
-                    title: Text('${(index + 1) * 200}'),
-                    trailing: LineIcon(LineIcons.alternateArrowCircleUp),
-                    iconColor: index % 2 == 0 ? Colors.red : Colors.lightGreen,
-                    tileColor: (index + 1) * 200 <= 500
-                        ? Palette.mainColor
-                        : Color.fromARGB(255, 214, 214, 214),
-                  ),
-                  onDismissed: (direction) {},
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+    return Consumer<DatabaseRepository>(builder: (context, dbr, child) {
+      return FutureBuilder(
+          future: dbr.findAllUsers(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final data = snapshot.data as List<User>;
+              return ListView.builder(
+                  padding: EdgeInsets.all(5),
+                  itemCount: data.length,
+                  itemBuilder: (context, userIndex) {
+                    final user = data[userIndex];
+                    return Container(
+                      padding: EdgeInsets.all(2),
+                      child: ListTile(
+                        onTap: () => showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(
+                                    'Total distance: ${user.distance.toStringAsFixed(2)} km'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('OK'))
+                                ],
+                              );
+                            }),
+                        tileColor: user.id == 0
+                            ? Palette.tertiaryColor
+                            : Palette.mainColorShade,
+                        title: Text(
+                          user.id == 0 ? 'You' : user.username,
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text('User level: ${user.level}'),
+                      ),
+                    );
+                  });
+            } else {
+              return CircularProgressIndicator();
+            }
+          });
+    });
   } //buil
 } //ProfilePage

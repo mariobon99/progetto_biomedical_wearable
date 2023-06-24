@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:progetto_wearable/screens/LoginPage.dart';
-import 'package:progetto_wearable/screens/MainPagewithNavBar.dart';
-import 'package:progetto_wearable/utils/impact.dart';
+import 'screens.dart';
+import 'package:progetto_wearable/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:progetto_wearable/services/impactService.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
+import '../widgets/customSnackBar.dart';
 
 //import 'package:flutter_login/theme.dart';
 
@@ -41,93 +40,69 @@ class LoginImpactPage extends StatelessWidget {
           centerTitle: true,
         ),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const ClipRRect(
-                child: Image(image: AssetImage('assets/images/ImpactLogo.png')),
-              ),
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: TextFormField(
-                  controller: usernameController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(90.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  width: 300,
+                  child: const Image(
+                      fit: BoxFit.contain,
+                      isAntiAlias: false,
+                      filterQuality: FilterQuality.high,
+                      image: AssetImage('assets/images/ImpactLogo.png')),
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: TextFormField(
+                    controller: usernameController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(90.0),
+                      ),
+                      labelText: 'Your IMPACT Username',
+                      icon: Icon(Icons.person),
                     ),
-                    labelText: 'Your IMPACT Username',
-                    icon: Icon(Icons.person),
                   ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: TextFormField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(90.0),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: TextFormField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(90.0),
+                      ),
+                      labelText: 'Your IMPACT Password',
+                      icon: Icon(Icons.lock),
                     ),
-                    labelText: 'Your IMPACT Password',
-                    icon: Icon(Icons.lock),
                   ),
                 ),
-              ),
-              Container(
-                width: 130,
-                height: 50,
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: ElevatedButton(
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.login,
-                        size: 15,
-                        //color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      const Text(
-                        'Authorize',
-                      )
-                    ],
-                  ),
-                  onPressed: () async {
-                    await saveUsernameImpact(usernameController.text);
-                    await savePasswordImpact(passwordController.text);
-                    final sp = await SharedPreferences.getInstance();
-                    final usernameImpact = sp.getString('usernameImpact');
-                    print('us');
-                    print(usernameImpact);
-                    print(Impact.username);
-                    final passwordImpact = sp.getString('passwordImpact');
-                    print('psw');
-                    print(passwordImpact);
-                    print(Impact.password);
-                    if (usernameImpact == null || passwordImpact == null) {
-                      ScaffoldMessenger.of(context)
-                        ..clearSnackBars()
-                        ..showSnackBar(const SnackBar(
-                          content: Text('Please enter your credentials'),
-                          duration: Duration(seconds: 2),
-                        ));
-                    } else {
-                      if (tokenManager.isBackendUp() == false) {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()));
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                                'IMPACT backend is down! Please try later '),
-                            duration: Duration(seconds: 2),
+                Container(
+                  width: 110,
+                  child: ElevatedButton(
+                    child: Center(
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.login,
+                            size: 15,
+                            //color: Colors.white,
                           ),
-                        ); //ScaffoldMessenger
-                      } else {
+                          SizedBox(
+                            width: 5,
+                          ),
+                          const Text(
+                            'Authorize',
+                          )
+                        ],
+                      ),
+                    ),
+                    onPressed: () async {
+                      String usernameImpact = usernameController.text;
+                      String passwordImpact = passwordController.text;
+                      if (usernameImpact != '' && passwordImpact != '') {
                         if (usernameImpact == Impact.username &&
                             passwordImpact == Impact.password) {
                           clearText();
@@ -137,26 +112,20 @@ class LoginImpactPage extends StatelessWidget {
                               MaterialPageRoute(
                                   builder: (context) => const MainPage()));
                         } else {
-                          ScaffoldMessenger.of(context)
-                            ..clearSnackBars()
-                            ..showSnackBar(const SnackBar(
-                              content: Text('Wrong credentials'),
-                              duration: Duration(seconds: 2),
-                            ));
+                          CustomSnackBar(
+                              context: context, message: 'Wrong credentials');
                         }
+                      } else {
+                        CustomSnackBar(
+                            context: context,
+                            message:
+                                'Insert Impact ID and password to authorize');
                       }
-                    }
-                  },
+                    },
+                  ),
                 ),
-              ),
-              ElevatedButton(
-                  onPressed: () async {
-                    final sp = await SharedPreferences.getInstance();
-                    await sp.remove('username');
-                    await sp.remove('password');
-                  },
-                  child: Text('DEBUG:Empty shared preferences'))
-            ],
+              ],
+            ),
           ),
         ));
   }
