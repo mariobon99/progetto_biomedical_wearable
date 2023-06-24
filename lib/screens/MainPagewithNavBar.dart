@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:progetto_wearable/screens/LoginPage.dart';
-import 'package:progetto_wearable/screens/ProfilePage.dart';
-import 'package:progetto_wearable/screens/ComunityPage.dart';
-import 'package:progetto_wearable/screens/PlacePage.dart';
-import 'package:progetto_wearable/screens/AdvicePage.dart';
-import 'package:progetto_wearable/screens/HomePage.dart';
+import 'screens.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:progetto_wearable/utils/palette.dart';
+import 'package:progetto_wearable/utils/utils.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -19,8 +14,10 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
   List<String> titles = ['Home', 'Place finder', 'Useful advices', 'Community'];
-  List<Widget> screens = [];
-
+  PageController pageController = PageController(
+    initialPage: 0,
+    keepPage: true,
+  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,18 +35,29 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
-      body: [
-        const HomePage(),
-        PlacePage(
-          onPageChange: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-        ),
-        const AdvisePage(),
-        CommunityPage()
-      ][_selectedIndex],
+      body: PageView(
+        controller: pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: [
+          const HomePage(),
+          PlacePage(
+            onPageChange: (index) {
+              setState(() {
+                _selectedIndex = index;
+                pageController.animateToPage(index,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.ease);
+              });
+            },
+          ),
+          const AdvisePage(),
+          CommunityPage()
+        ],
+      ),
       drawer: Drawer(
           child: Column(
         children: [
@@ -153,6 +161,9 @@ class _MainPageState extends State<MainPage> {
               onTabChange: (index) {
                 setState(() {
                   _selectedIndex = index;
+                  pageController.animateToPage(index,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.ease);
                 });
               },
             ),

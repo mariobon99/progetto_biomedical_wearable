@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:progetto_wearable/screens/LoginPage.dart';
-import 'package:progetto_wearable/screens/MainPagewithNavBar.dart';
-import 'package:progetto_wearable/utils/impact.dart';
+import 'screens.dart';
+import 'package:progetto_wearable/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:progetto_wearable/services/impactService.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-
 import '../widgets/customSnackBar.dart';
 
 //import 'package:flutter_login/theme.dart';

@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:progetto_wearable/repositories/databaseRepository.dart';
 import 'package:provider/provider.dart';

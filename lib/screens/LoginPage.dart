@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:progetto_wearable/screens/LoginImpactPage.dart';
-import 'package:progetto_wearable/screens/MainPagewithNavBar.dart';
-import 'package:progetto_wearable/screens/RegisterPage.dart';
+import 'screens.dart';
+import 'package:progetto_wearable/utils/utils.dart';
 import 'package:progetto_wearable/widgets/customSnackBar.dart';
 import 'package:progetto_wearable/widgets/loginImageButton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:progetto_wearable/services/impactService.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import '../utils/palette.dart';
-//import 'package:flutter_login/theme.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);

@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:progetto_wearable/utils/placeToVisit.dart';
 import 'package:progetto_wearable/widgets/customSnackBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../models/activity.dart';
 import '../services/impactService.dart';
 
