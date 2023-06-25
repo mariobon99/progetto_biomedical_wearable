@@ -130,7 +130,31 @@ Widget usernameTextField() {
         if (value == null || value.isEmpty) {
           return 'Please enter your password or cancel';
         }
-        return null;
+        else{
+          String error = "";
+          if (value.length < 8) {
+            error = 'Please enter at least 8 characters\n';
+          } 
+          if (!(value.contains(RegExp(r'[a-z]')))) {
+            error += "Please enter at least one lowercase letter\n";
+          }
+          if (!(value.contains(RegExp(r'[A-Z]')))) {
+            error += "Please enter at least one uppercase letter\n";
+          }
+          if (!(value.contains(RegExp(r'[0-9]')))) {
+            error += "Please enter at least one number\n";
+          }
+          if (!(value.contains(RegExp(r'[!@#%^$&*()?:{}|<>]')))) {
+            error += "Please enter at least: !, @, #, %, ^, \$, &, *, (, ), ?, :, {, }, |, <, >";
+          }
+          if(error.isNotEmpty){
+            return error.toString();    
+          }
+          else{
+            return null;
+          }
+        }
+     
       },
       controller: passwordController,
       enabled: true,
