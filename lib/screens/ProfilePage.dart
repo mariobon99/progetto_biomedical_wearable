@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:progetto_wearable/screens/EditProfilePage.dart';
 import 'package:progetto_wearable/utils/palette.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:progetto_wearable/widgets/DialogueEditProfile.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key? key}) : super(key: key);
@@ -18,7 +19,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   String? username;
   String? password;
-  int? age;
   String? email;
 
   File? _image;
@@ -36,8 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       username = prefs.getString('username');
       password = prefs.getString('password');
-      email = prefs.getString('mail');
-      age = prefs.getInt('age');
+      email = prefs.getString('email');
       if (prefs.getString('image') != null) {
         _image = File(prefs.getString('image')!);
       }
@@ -48,7 +47,19 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Palette.bgColor,
-      appBar: AppBar(title: const Text('$routename')),
+      appBar: AppBar(
+        title: const Text('$routename'),
+        actions: <Widget>[
+            IconButton(
+              onPressed: (){
+                openDialog(context).then((value) {
+                    // Aggiorna i dati quando si torna da Edit Profile
+                    loadSavedValues();
+                  });
+              },
+              icon: const Icon(Icons.edit))
+        ],
+        ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -69,7 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 top: 70, bottom: 0, left: 10, right: 10),
                             child: Column(
                               children: <Widget>[
@@ -129,22 +140,6 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(
                 height: 20,
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Palette.tertiaryColor),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      fullscreenDialog: true,
-                      builder: (context) => EditprofilePage(),
-                    ),
-                  ).then((value) {
-                    // Aggiorna i dati quando si torna da Edit Profile
-                    loadSavedValues();
-                  });
-                },
-                child: const Text("Edit Profile"),
-              ),
             ],
           ),
         ),
@@ -156,7 +151,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Stack(children: <Widget>[
       CircleAvatar(
         radius: 82.0,
-        backgroundColor: Colors.black,
+        backgroundColor: Palette.black,
         child: CircleAvatar(
           radius: 80.0,
           backgroundImage: _image == null
@@ -189,12 +184,12 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Container(
             padding: EdgeInsets.all(5.0),
             decoration: const BoxDecoration(
-              color: Colors.black,
+              color: Palette.mainColor,
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.camera_alt,
-              color: Colors.white,
+              color: Palette.white,
             ),
           ),
         ),
