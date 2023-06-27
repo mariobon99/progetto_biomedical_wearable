@@ -29,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
   File? _image;
   var imagePicker;
 
-  int Userlevel = 2;
+  int Userlevel = 3;
 
   @override
   void initState() {
@@ -146,8 +146,21 @@ class _ProfilePageState extends State<ProfilePage> {
                     builder: (BuildContext context) {
                       return CustomAlert(
                         title: Levels.title2,
-                        imagePath: Levels.imagePath1,
+                        imagePath: Levels.imagePath2,
                         description: Levels.description2,
+                      );
+                    },
+                  );
+
+                  }
+                  if (Userlevel==3){
+                    showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CustomAlert(
+                        title: Levels.title3,
+                        imagePath: Levels.imagePath3,
+                        description: Levels.description3,
                       );
                     },
                   );
