@@ -6,6 +6,8 @@ import 'package:progetto_wearable/screens/EditProfilePage.dart';
 import 'package:progetto_wearable/utils/palette.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:progetto_wearable/widgets/DialogueEditProfile.dart';
+import 'package:progetto_wearable/widgets/CustomDialogueLevel.dart';
+
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key? key}) : super(key: key);
@@ -120,6 +122,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
+                onTap: (){
+                  showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return CustomAlert();
+                },
+              );
+                },
               ),
               const SizedBox(
                 height: 20,
