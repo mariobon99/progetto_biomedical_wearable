@@ -7,6 +7,9 @@ import 'package:progetto_wearable/utils/palette.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:progetto_wearable/widgets/DialogueEditProfile.dart';
 import 'package:progetto_wearable/widgets/CustomDialogueLevel.dart';
+import 'package:progetto_wearable/utils/levels.dart';
+import 'package:progetto_wearable/repositories/databaseRepository.dart';
+import 'package:provider/provider.dart';
 
 
 class ProfilePage extends StatefulWidget {
@@ -25,6 +28,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   File? _image;
   var imagePicker;
+
+  int Userlevel = 2;
 
   @override
   void initState() {
@@ -111,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               ListTile(
                 title: const Text('Your Level'),
-                subtitle: const Text('Bradipo'),
+                subtitle: const Text('Level name'),
                 leading: const ImageIcon(
                   AssetImage("assets/images/level-up.png"),
                   color: Palette.black,
@@ -123,12 +128,31 @@ class _ProfilePageState extends State<ProfilePage> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 onTap: (){
-                  showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return CustomAlert();
-                },
-              );
+                  if (Userlevel==1){
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return CustomAlert(
+                          title: Levels.title1,
+                          imagePath: Levels.imagePath1,
+                          description: Levels.description1,
+                        );
+                      },
+                    );
+                  } 
+                  if (Userlevel==2){
+                    showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CustomAlert(
+                        title: Levels.title2,
+                        imagePath: Levels.imagePath1,
+                        description: Levels.description2,
+                      );
+                    },
+                  );
+
+                  }
                 },
               ),
               const SizedBox(
