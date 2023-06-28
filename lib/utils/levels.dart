@@ -14,3 +14,34 @@ class Levels {
   static const String description3 =
     'Sei un ghepardo supersprint! \nLa tua velocità è leggendaria e nessuno riesce a tenerti il passo. Vedi un obiettivo e lo raggiungi in un batter d\' occhio. Sei unvero eserto nel trascinare gli amici pigri a fare attività fisica.\nAbbiamo selezionato dei luoghi perfetti per te, dove potrai mettere all aprova la tua velocità e goderti l\'adrenalina della corsa come un vero ghepardo';
 }
+
+/*La funzione prende in input livello, distanza e posti visitati dal database.
+  A questo punto verifica se è stato sbloccato un nuovo livello e ritorna il livello sbloccato, altrimenti ritorna 0:
+    - se il livello è 1 non è necessario aggiornare il db in quanto è il livello base (return 0)
+    - se ho sblocato il livello 2 è necessario aggiornare il livello passando a 2 (return 2)
+    - se ho sblocato il livello 3 è necessario aggiornare il livello passando a 3 (return 3)
+ */
+int levelOvertake(int level, double distance, int n_visited_places){
+  if(distance <= 10.0 || n_visited_places <= 3){
+    //nessun aggiornamento a database e quindi ritorno 1
+    return 0;
+  }
+
+  if((distance > 10.0 && distance <= 100.0) || (n_visited_places > 3 && n_visited_places <= 7)){
+    if(level != 2){
+      //update del livello nel database a 2
+      return 2;
+    }
+    return 0;
+  }
+
+  if(distance > 100.0 && n_visited_places > 7){
+    if(level != 3){
+      //update del livello nel database a 3
+      return 3;
+    }
+    return 0;
+  }
+  
+  return 0;
+}
