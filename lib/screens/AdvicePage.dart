@@ -93,7 +93,7 @@ class _AdvisePageState extends State<AdvisePage> {
                           .findNumPlaces(0) ??
                       0;
                       print("I posti visitati sono: $n_visited_places");
-            int current_level = checkLevel(distance, 6);
+            int current_level = checkLevel(distance, 8);
 
             if(current_level > userLevel){
               print("Devi aggiornare il livello\n");
