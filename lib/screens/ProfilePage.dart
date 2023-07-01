@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:progetto_wearable/screens/AchievmentsPage.dart';
 import 'package:progetto_wearable/screens/EditProfilePage.dart';
 import 'package:progetto_wearable/utils/palette.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -189,6 +190,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(fullscreenDialog: true, builder: (context)=> AchievmentsPage()));
+
+                          },
                         ),
                         const SizedBox(
                           height: 20,
