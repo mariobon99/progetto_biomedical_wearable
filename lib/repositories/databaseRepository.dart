@@ -26,4 +26,10 @@ class DatabaseRepository extends ChangeNotifier {
     final distance = await database.usersDao.findUserLevel(id);
     return distance;
   }
+
+  Future<int?> findNumPlaces(int id) async {
+    final numPlaces = await database.visitedPlacesDao.findNumPlaces(id);
+    return numPlaces;
+  }
+
 }
