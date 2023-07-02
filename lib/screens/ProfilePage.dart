@@ -12,6 +12,8 @@ import 'package:progetto_wearable/utils/levels.dart';
 import 'package:progetto_wearable/repositories/databaseRepository.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/CustomDialogueNewLevelUnlocked.dart';
+
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key? key}) : super(key: key);
@@ -198,6 +200,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         const SizedBox(
                           height: 20,
                         ),
+                        ElevatedButton(onPressed: (){
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context){
+                              return CustomAlertNewLevel();
+                            }
+                          );
+                        }, child: Text('prova pop-up nuovo livello sbloccato '))
                       ],
                     ),
                   ),
