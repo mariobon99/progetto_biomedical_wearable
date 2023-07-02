@@ -125,7 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         ListTile(
                           title: const Text('Your Level'),
-                          subtitle: const Text('Level name'),
+                          subtitle: Text('Level: $Userlevel'),
                           leading: const ImageIcon(
                             AssetImage("assets/images/level-up.png"),
                             color: Palette.black,
