@@ -39,7 +39,7 @@ class _AchievmentsPageState extends State<AchievmentsPage> {
 
           return ListTile(
             leading:Image.asset(
-                'assets/images/QRcode.jpeg',
+                'assets/images/QRcode$currentLevel.jpeg',
                 width: 60,
                 height: 60,
                 ),
@@ -52,7 +52,7 @@ class _AchievmentsPageState extends State<AchievmentsPage> {
                   return AlertDialog(
                     title: const Text('QR code'),
                     content: Image.asset(
-                      'assets/images/QRcode.jpeg',
+                      'assets/images/QRcode$currentLevel.jpeg',
                       width: 250,
                       height: 250,
                     ),

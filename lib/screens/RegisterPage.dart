@@ -117,7 +117,7 @@ class RegisterPage extends StatelessWidget {
                       await sp.setString('mail', mailController.text);
 
                       User user = User(0, usernameController.text,
-                          passwordController.text, mailController.text, 2, 300);
+                          passwordController.text, mailController.text, 1, 0);
 
                       Provider.of<DatabaseRepository>(context, listen: false)
                           .insertUser(user);

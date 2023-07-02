@@ -91,9 +91,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void stampaDiProva(){
-    print("Prova di stampa\n");
-  }
 
   @override
   Widget build(BuildContext context) {

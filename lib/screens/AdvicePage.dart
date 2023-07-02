@@ -8,7 +8,7 @@ import '../database/entities/users.dart';
 import '../models/activity.dart';
 import '../services/impactService.dart';
 
-import 'package:progetto_wearable/utils/levels.dart';
+import 'package:progetto_wearable/utils/functionUtils.dart';
 
 class AdvisePage extends StatefulWidget {
   const AdvisePage({super.key});
@@ -93,7 +93,7 @@ class _AdvisePageState extends State<AdvisePage> {
                           .findNumPlaces(0) ??
                       0;
                       print("I posti visitati sono: $n_visited_places");
-            int current_level = checkLevel(distance, 8);
+            int current_level = checkLevel(distance, n_visited_places);
 
             if(current_level > userLevel){
               print("Devi aggiornare il livello\n");
@@ -121,21 +121,4 @@ double computeMean(List<Activity>? result) {
     }
   }
   return somma / totalValidActivities;
-}
-
-/*La funzione checkLevel verifica in che livello si trova l'utente in basa alla distanza percorsa e ai posti visitati*/
-int checkLevel(double distance, int n_visited_places){
-  if(distance <= 10.0 || n_visited_places <= 3){
-    return 1;
-  }
-  
-  if((distance > 10.0 && distance <= 100.0) || (n_visited_places > 3 && n_visited_places <= 7)){
-      return 2;
-  }
-
-  if (distance > 100.0 && n_visited_places > 7){
-      return 3;
-  }
-
-  return 1;
 }
