@@ -108,7 +108,7 @@ class LoginPage extends StatelessWidget {
                     if (username == null || password == null) {
                       CustomSnackBar(context: context, message: 'Register');
                     } else {
-                      if (usernameController.text == username &&
+                      if (usernameController.text.trim() == username &&
                           passwordController.text == password) {
                         clearText();
                         if (refresh == null) {

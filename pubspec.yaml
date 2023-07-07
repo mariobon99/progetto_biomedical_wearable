@@ -41,6 +41,8 @@ dependencies:
   floor: ^1.4.2
   jwt_decoder: ^2.0.1
   provider: ^6.0.5
+  username_gen: ^1.0.4
+  fl_chart: ^0.41.0
 
 
 

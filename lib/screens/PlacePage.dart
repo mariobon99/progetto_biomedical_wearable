@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:progetto_wearable/repositories/databaseRepository.dart';
 import 'package:progetto_wearable/utils/palette.dart';
 import 'dart:async';
 import 'package:progetto_wearable/utils/placeToVisit.dart';
 import 'package:progetto_wearable/widgets/customSnackBar.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../database/entities/entities.dart';
 import '../models/activity.dart';
 import '../services/impactService.dart';
 
@@ -20,8 +23,10 @@ class PlacePage extends StatefulWidget {
 
 class PlacePageState extends State<PlacePage> {
   Position? _currentUserPosition;
-  Locations locations = Locations();
-  double? meanDistance = 100000;
+  Locations location = Locations();
+  List<Place> places = [];
+  List distances = [];
+  double? meanDistance = 100;
 
   @override
   void initState() {
@@ -82,13 +87,22 @@ class PlacePageState extends State<PlacePage> {
     });
   }
 
-  Future<void> _getTheDistance() async {
+  void _getTheDistance() async {
     await _determinePosition();
-    //_currentUserPosition = await Geolocator.getCurrentPosition();
+    var listPlaces =
+        // ignore: use_build_context_synchronously
+        await Provider.of<DatabaseRepository>(context, listen: false)
+            .findAllPlaces();
+    setState(() {
+      places = listPlaces;
+      distances = List.filled(places.length,
+          0); // done to avoid rendering errors for index range errors
+    });
+    print(places.length);
 
-    for (int i = 0; i < locations.allplaces.length; i++) {
-      double storelat = locations.allplaces[i]['latitudine'];
-      double storelng = locations.allplaces[i]['longitudine'];
+    for (int i = 0; i < places.length; i++) {
+      double storelat = places[i].latitude;
+      double storelng = places[i].longitude;
 
       double? distance = Geolocator.distanceBetween(
         _currentUserPosition!.latitude,
@@ -97,7 +111,7 @@ class PlacePageState extends State<PlacePage> {
         storelng,
       );
       setState(() {
-        locations.allplaces[i]['distance'] = (distance / 1000);
+        distances[i] = (distance / 1000);
       });
     }
   }
@@ -125,8 +139,8 @@ class PlacePageState extends State<PlacePage> {
     return somma / totalValidActivities;
   }
 
-  Widget _placeTile(place) {
-    bool condition = place['distance'] < (meanDistance! / 2);
+  Widget _placeTile(Place place, double distance) {
+    bool condition = distance < (meanDistance! / 2);
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: GestureDetector(
@@ -144,12 +158,14 @@ class PlacePageState extends State<PlacePage> {
                       ? AlertDialog(
                           title: const Text('Start activity?'),
                           content:
-                              Text('You selected ${place['name']}. Continue?'),
+                              Text('You selected ${place.name}. Continue?'),
                           actions: [
                             TextButton(
                                 onPressed: () async {
                                   await sp.setString(
-                                      'selected place', place['name']);
+                                      'selected place', place.name!);
+                                  await sp.setInt(
+                                      'selected place id', place.id!);
                                   _changePage();
                                   Navigator.of(context).pop();
                                 },
@@ -164,7 +180,7 @@ class PlacePageState extends State<PlacePage> {
                       : AlertDialog(
                           title: const Text('Activity not available'),
                           content: Text(
-                              'You selected ${place['name']}. Your level is too low to select this destination.'),
+                              'You selected ${place.name}. Your level is too low to select this destination.'),
                           actions: [
                             TextButton(
                                 onPressed: () {
@@ -195,7 +211,7 @@ class PlacePageState extends State<PlacePage> {
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(10)),
                 child: Image.network(
-                  place['image'],
+                  place.imageLink,
                   fit: BoxFit.cover,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) {
@@ -225,7 +241,7 @@ class PlacePageState extends State<PlacePage> {
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: Text(
-                          place['name'],
+                          place.name!,
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -242,7 +258,7 @@ class PlacePageState extends State<PlacePage> {
                         //devo sistemare bene tra metri e chilometri
 
                         Text(
-                          "${place['distance'].toStringAsFixed(2)} KM Away",
+                          "${distance.toStringAsFixed(2)} KM Away",
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
@@ -266,9 +282,9 @@ class PlacePageState extends State<PlacePage> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
       child: ListView.builder(
-          itemCount: locations.allplaces.length,
+          itemCount: places.length,
           itemBuilder: (context, index) {
-            return _placeTile(locations.allplaces[index]);
+            return _placeTile(places[index], distances[index]);
           }),
     );
   }

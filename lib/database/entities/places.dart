@@ -1,20 +1,21 @@
 import 'package:floor/floor.dart';
 
 @Entity(tableName: 'Place')
-class Place{
+class Place {
 // id is the PRIMARY KEY for the table Place
-@PrimaryKey(autoGenerate: true)
-final int? id; 
+  @PrimaryKey(autoGenerate: true)
+  final int? id;
+
+  final String? name;
 
 // latitude of the place
-final String latitude;
+  final double latitude;
 
 // longitude of the place
-final String longitude;
+  final double longitude;
 
-final String imageLink;
+  final String imageLink;
 
   //Default constructor
-  Place(this.id, this.latitude, this.longitude, this.imageLink);
-
+  Place(this.id, this.name, this.latitude, this.longitude, this.imageLink);
 } //Place

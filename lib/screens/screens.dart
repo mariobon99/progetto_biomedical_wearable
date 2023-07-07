@@ -8,3 +8,4 @@ export 'MainPagewithNavBar.dart';
 export 'PlacePage.dart';
 export 'ProfilePage.dart';
 export 'RegisterPage.dart';
+export 'InfoPage.dart';
