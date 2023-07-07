@@ -7,6 +7,10 @@ import 'package:progetto_wearable/utils/palette.dart';
 import 'package:progetto_wearable/utils/placeToVisit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:provider/provider.dart';
+import 'package:progetto_wearable/database/entities/entities.dart';
+
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
   //static const routename = 'HomePage';
@@ -86,6 +90,7 @@ class _HomePageState extends State<HomePage> {
       _placeName = placeName;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

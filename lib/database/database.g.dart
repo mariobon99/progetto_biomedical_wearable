@@ -357,6 +357,14 @@ class _$VisitedPlaceDao extends VisitedPlaceDao {
   }
 
   @override
+  Future<int?> findNumPlaces(int idUser) async {
+    return _queryAdapter.query(
+        'SELECT COUNT(*) FROM VisitedPlace WHERE idUser=?1',
+        mapper: (Map<String, Object?> row) => row.values.first as int,
+        arguments: [idUser]);
+  }
+
+  @override
   Future<void> insertVisitedPlace(VisitedPlace visitedPlace) async {
     await _visitedPlaceInsertionAdapter.insert(
         visitedPlace, OnConflictStrategy.abort);

@@ -22,4 +22,8 @@ abstract class VisitedPlaceDao {
   //Query that allows to seletc the places visited by a User
   @Query('SELECT idPlace FROM VisitedPlace WHERE idUser=:idUser')
   Stream<VisitedPlace?> findAllPlacesByAUser(int idUser);
+  
+  //Query that allows to seletc the number of places visited by a User
+  @Query('SELECT COUNT(idPlace) FROM VisitedPlace WHERE idUser=:idUser')
+  Future<int?> findNumPlaces(int idUser); 
 }

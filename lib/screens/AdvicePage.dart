@@ -1,11 +1,14 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:progetto_wearable/database/daos/dao.dart';
 import 'package:progetto_wearable/repositories/databaseRepository.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../database/entities/users.dart';
 import '../models/activity.dart';
 import '../services/impactService.dart';
+
+import 'package:progetto_wearable/utils/functionUtils.dart';
 
 class AdvisePage extends StatefulWidget {
   const AdvisePage({super.key});
@@ -73,8 +76,35 @@ class _AdvisePageState extends State<AdvisePage> {
               onPressed: () {
                 addRandomUsersToDatabase(20);
               },
-              child: Text('Add users'))
+              child: Text('Add users')),
+              ElevatedButton(
+          onPressed: ()async{
+            int userLevel =
+                  await Provider.of<DatabaseRepository>(context, listen: false)
+                          .findUserLevel(0) ??
+                      0;
+                      print("Il livello è: $userLevel");
+            double distance=  await Provider.of<DatabaseRepository>(context, listen: false)
+                          .findUserDistance(0) ??
+                      0;
+                      print("La distanza è: $distance");
+            int n_visited_places =
+                  await Provider.of<DatabaseRepository>(context, listen: false)
+                          .findNumPlaces(0) ??
+                      0;
+                      print("I posti visitati sono: $n_visited_places");
+            int current_level = checkLevel(distance, n_visited_places);
+
+            if(current_level > userLevel){
+              print("Devi aggiornare il livello\n");
+             //aggiornare livello dal database
+            }            
+          },
+          
+          child:Text('Prova database per livelli')
+        )
         ],
+        
       ),
     ));
     ;
