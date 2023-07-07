@@ -70,3 +70,4 @@ class DatabaseRepository extends ChangeNotifier {
     return await database.visitedPlacesDao.findAllPlacesByAUser(idUser);
   }
 }
+

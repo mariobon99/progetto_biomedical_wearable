@@ -26,4 +26,5 @@ abstract class VisitedPlaceDao {
   @Query(
       'SELECT DISTINCT COUNT(idPlace) FROM VisitedPlace WHERE idUser = :idUser')
   Future<int?> findVisitedPlacesByUser(int idUser);
+
 }

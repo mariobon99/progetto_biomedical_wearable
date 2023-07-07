@@ -14,6 +14,10 @@ import 'package:progetto_wearable/widgets/customSnackBar.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:provider/provider.dart';
+import 'package:progetto_wearable/database/entities/entities.dart';
+
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
   //static const routename = 'HomePage';
@@ -104,6 +108,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+
   void _endActivity() async {
     final sp = await SharedPreferences.getInstance();
     int placeId = sp.getInt('selected place id')!;
@@ -121,6 +126,7 @@ class _HomePageState extends State<HomePage> {
     Provider.of<DatabaseRepository>(context, listen: false)
         .insertVisitedPlace(visitedPlace);
   }
+
 
   @override
   Widget build(BuildContext context) {
