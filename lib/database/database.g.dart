@@ -91,9 +91,9 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `User` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `username` TEXT NOT NULL, `password` TEXT NOT NULL, `email` TEXT NOT NULL, `level` INTEGER NOT NULL, `distance` REAL NOT NULL)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Place` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `latitude` TEXT NOT NULL, `longitude` TEXT NOT NULL, `imageLink` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `Place` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `imageLink` TEXT NOT NULL)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `VisitedPlace` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `idUser` INTEGER NOT NULL, `idPlace` INTEGER NOT NULL, FOREIGN KEY (`idUser`) REFERENCES `User` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`idPlace`) REFERENCES `Place` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `VisitedPlace` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `idUser` INTEGER NOT NULL, `idPlace` INTEGER NOT NULL, `distance` REAL, FOREIGN KEY (`idUser`) REFERENCES `User` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`idPlace`) REFERENCES `Place` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -173,7 +173,7 @@ class _$UsersDao extends UsersDao {
 
   @override
   Future<List<User>> findAllUsers() async {
-    return _queryAdapter.queryList('SELECT * FROM User',
+    return _queryAdapter.queryList('SELECT * FROM User ORDER BY distance DESC',
         mapper: (Map<String, Object?> row) => User(
             row['id'] as int?,
             row['username'] as String,
@@ -195,6 +195,16 @@ class _$UsersDao extends UsersDao {
     return _queryAdapter.query('SELECT level FROM User WHERE id=?1',
         mapper: (Map<String, Object?> row) => row.values.first as int,
         arguments: [id]);
+  }
+
+  @override
+  Future<void> updateUserDistance(
+    int id,
+    double amount,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE User SET distance = distance + ?2 WHERE id = ?1',
+        arguments: [id, amount]);
   }
 
   @override
@@ -223,6 +233,7 @@ class _$PlacesDao extends PlacesDao {
             'Place',
             (Place item) => <String, Object?>{
                   'id': item.id,
+                  'name': item.name,
                   'latitude': item.latitude,
                   'longitude': item.longitude,
                   'imageLink': item.imageLink
@@ -233,6 +244,7 @@ class _$PlacesDao extends PlacesDao {
             ['id'],
             (Place item) => <String, Object?>{
                   'id': item.id,
+                  'name': item.name,
                   'latitude': item.latitude,
                   'longitude': item.longitude,
                   'imageLink': item.imageLink
@@ -243,6 +255,7 @@ class _$PlacesDao extends PlacesDao {
             ['id'],
             (Place item) => <String, Object?>{
                   'id': item.id,
+                  'name': item.name,
                   'latitude': item.latitude,
                   'longitude': item.longitude,
                   'imageLink': item.imageLink
@@ -262,12 +275,25 @@ class _$PlacesDao extends PlacesDao {
 
   @override
   Future<List<Place>> findAllPlaces() async {
-    return _queryAdapter.queryList('SELECT * FROM Places',
+    return _queryAdapter.queryList('SELECT * FROM Place',
         mapper: (Map<String, Object?> row) => Place(
             row['id'] as int?,
-            row['latitude'] as String,
-            row['longitude'] as String,
+            row['name'] as String?,
+            row['latitude'] as double,
+            row['longitude'] as double,
             row['imageLink'] as String));
+  }
+
+  @override
+  Future<Place?> findPlaceByName(String name) async {
+    return _queryAdapter.query('SELECT * FROM Place WHERE name= ?1',
+        mapper: (Map<String, Object?> row) => Place(
+            row['id'] as int?,
+            row['name'] as String?,
+            row['latitude'] as double,
+            row['longitude'] as double,
+            row['imageLink'] as String),
+        arguments: [name]);
   }
 
   @override
@@ -290,16 +316,16 @@ class _$VisitedPlaceDao extends VisitedPlaceDao {
   _$VisitedPlaceDao(
     this.database,
     this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database, changeListener),
+  )   : _queryAdapter = QueryAdapter(database),
         _visitedPlaceInsertionAdapter = InsertionAdapter(
             database,
             'VisitedPlace',
             (VisitedPlace item) => <String, Object?>{
                   'id': item.id,
                   'idUser': item.idUser,
-                  'idPlace': item.idPlace
-                },
-            changeListener),
+                  'idPlace': item.idPlace,
+                  'distance': item.distance
+                }),
         _visitedPlaceUpdateAdapter = UpdateAdapter(
             database,
             'VisitedPlace',
@@ -307,9 +333,9 @@ class _$VisitedPlaceDao extends VisitedPlaceDao {
             (VisitedPlace item) => <String, Object?>{
                   'id': item.id,
                   'idUser': item.idUser,
-                  'idPlace': item.idPlace
-                },
-            changeListener),
+                  'idPlace': item.idPlace,
+                  'distance': item.distance
+                }),
         _visitedPlaceDeletionAdapter = DeletionAdapter(
             database,
             'VisitedPlace',
@@ -317,9 +343,9 @@ class _$VisitedPlaceDao extends VisitedPlaceDao {
             (VisitedPlace item) => <String, Object?>{
                   'id': item.id,
                   'idUser': item.idUser,
-                  'idPlace': item.idPlace
-                },
-            changeListener);
+                  'idPlace': item.idPlace,
+                  'distance': item.distance
+                });
 
   final sqflite.DatabaseExecutor database;
 
@@ -334,26 +360,33 @@ class _$VisitedPlaceDao extends VisitedPlaceDao {
   final DeletionAdapter<VisitedPlace> _visitedPlaceDeletionAdapter;
 
   @override
-  Future<List<User>> findAllVisitedPlaces() async {
+  Future<List<VisitedPlace>> findAllVisitedPlaces() async {
     return _queryAdapter.queryList('SELECT * FROM VisitedPlace',
-        mapper: (Map<String, Object?> row) => User(
+        mapper: (Map<String, Object?> row) => VisitedPlace(
             row['id'] as int?,
-            row['username'] as String,
-            row['password'] as String,
-            row['email'] as String,
-            row['level'] as int,
-            row['distance'] as double));
+            row['idUser'] as int,
+            row['idPlace'] as int,
+            row['distance'] as double?));
   }
 
   @override
-  Stream<VisitedPlace?> findAllPlacesByAUser(int idUser) {
-    return _queryAdapter.queryStream(
-        'SELECT idPlace FROM VisitedPlace WHERE idUser=?1',
+  Future<List<VisitedPlace>?> findAllPlacesByAUser(int idUser) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM VisitedPlace WHERE idUser=?1 ORDER BY id ASC',
         mapper: (Map<String, Object?> row) => VisitedPlace(
-            row['id'] as int?, row['idUser'] as int, row['idPlace'] as int),
-        arguments: [idUser],
-        queryableName: 'VisitedPlace',
-        isView: false);
+            row['id'] as int?,
+            row['idUser'] as int,
+            row['idPlace'] as int,
+            row['distance'] as double?),
+        arguments: [idUser]);
+  }
+
+  @override
+  Future<int?> findVisitedPlacesByUser(int idUser) async {
+    return _queryAdapter.query(
+        'SELECT DISTINCT COUNT(idPlace) FROM VisitedPlace WHERE idUser = ?1',
+        mapper: (Map<String, Object?> row) => row.values.first as int,
+        arguments: [idUser]);
   }
 
   @override

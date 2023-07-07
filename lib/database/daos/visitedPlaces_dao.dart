@@ -5,7 +5,7 @@ import 'package:progetto_wearable/database/entities/entities.dart';
 abstract class VisitedPlaceDao {
   //Query that allows to obrain all the Users in the table
   @Query('SELECT * FROM VisitedPlace')
-  Future<List<User>> findAllVisitedPlaces();
+  Future<List<VisitedPlace>> findAllVisitedPlaces();
 
   //Query that allows to insert a new User in the table
   @insert
@@ -20,10 +20,11 @@ abstract class VisitedPlaceDao {
   Future<void> updateUVisitedPlace(VisitedPlace visitedPlace);
 
   //Query that allows to seletc the places visited by a User
-  @Query('SELECT idPlace FROM VisitedPlace WHERE idUser=:idUser')
-  Stream<VisitedPlace?> findAllPlacesByAUser(int idUser);
-  
-  //Query that allows to seletc the number of places visited by a User
-  @Query('SELECT COUNT(idPlace) FROM VisitedPlace WHERE idUser=:idUser')
-  Future<int?> findNumPlaces(int idUser); 
+  @Query('SELECT * FROM VisitedPlace WHERE idUser=:idUser ORDER BY id ASC')
+  Future<List<VisitedPlace>?> findAllPlacesByAUser(int idUser);
+
+  @Query(
+      'SELECT DISTINCT COUNT(idPlace) FROM VisitedPlace WHERE idUser = :idUser')
+  Future<int?> findVisitedPlacesByUser(int idUser);
+
 }

@@ -7,7 +7,7 @@ import 'package:progetto_wearable/database/entities/entities.dart';
 @dao
 abstract class UsersDao {
   //Query that allows to obrain all the Users in the table
-  @Query('SELECT * FROM User')
+  @Query('SELECT * FROM User ORDER BY distance DESC')
   Future<List<User>> findAllUsers();
 
   //Query that allows to insert a new User in the table
@@ -29,4 +29,8 @@ abstract class UsersDao {
   //Query that allows to select user's level
   @Query('SELECT level FROM User WHERE id=:id')
   Future<int?> findUserLevel(int id);
+
+  //Query tha allows to update the distance of a user
+  @Query('UPDATE User SET distance = distance + :amount WHERE id = :id')
+  Future<void> updateUserDistance(int id, double amount);
 }

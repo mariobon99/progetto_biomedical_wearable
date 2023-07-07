@@ -6,7 +6,7 @@ class DatabaseRepository extends ChangeNotifier {
   final AppDatabase database;
 
   DatabaseRepository({required this.database});
-
+  // User queries
   Future<void> insertUser(User user) async {
     await database.usersDao.insertUser(user);
     notifyListeners();
@@ -27,9 +27,47 @@ class DatabaseRepository extends ChangeNotifier {
     return distance;
   }
 
-  Future<int?> findNumPlaces(int id) async {
-    final numPlaces = await database.visitedPlacesDao.findNumPlaces(id);
-    return numPlaces;
+  Future<void> updateUserDistance(int id, double amount) async {
+    await database.usersDao.updateUserDistance(id, amount);
+    notifyListeners();
   }
 
+  // Places queries
+
+  Future<List<Place>> findAllPlaces() async {
+    List<Place> places = await database.placesDao.findAllPlaces();
+    return places;
+  }
+
+  Future<Place?> findPlaceByName(String name) async {
+    Place? place = await database.placesDao.findPlaceByName(name);
+    return place;
+  }
+
+  Future<void> insertPlace(Place place) async {
+    await database.placesDao.insertPlace(place);
+    notifyListeners();
+  }
+
+  // VisitedPlace queries
+  Future<List<VisitedPlace>> findAllVisitedPlaces() async {
+    final places = await database.visitedPlacesDao.findAllVisitedPlaces();
+    return places;
+  }
+
+  Future<void> insertVisitedPlace(VisitedPlace visitedPlace) async {
+    await database.visitedPlacesDao.insertVisitedPlace(visitedPlace);
+    notifyListeners();
+  }
+
+  Future<int?> findVisitedPlacesByUser(int idUser) async {
+    final visitedPlaces =
+        await database.visitedPlacesDao.findVisitedPlacesByUser(idUser);
+    return visitedPlaces;
+  }
+
+  Future<List<VisitedPlace>?> findAllPlacesByAUser(int idUser) async {
+    return await database.visitedPlacesDao.findAllPlacesByAUser(idUser);
+  }
 }
+

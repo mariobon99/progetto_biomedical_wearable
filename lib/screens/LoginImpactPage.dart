@@ -35,96 +35,129 @@ class LoginImpactPage extends StatelessWidget {
     final tokenManager = TokenManager();
 
     return Scaffold(
+        backgroundColor: Palette.bgColor,
         appBar: AppBar(
-          title: Text(LoginImpactPage.routename),
+          title: const Text(LoginImpactPage.routename),
           centerTitle: true,
         ),
         body: Center(
           child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  width: 300,
-                  child: const Image(
-                      fit: BoxFit.contain,
-                      isAntiAlias: false,
-                      filterQuality: FilterQuality.high,
-                      image: AssetImage('assets/images/ImpactLogo.png')),
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  child: TextFormField(
-                    controller: usernameController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(90.0),
-                      ),
-                      labelText: 'Your IMPACT Username',
-                      icon: Icon(Icons.person),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Palette.mainColor),
+                    color: Palette.mainColorShade),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const SizedBox(
+                      height: 20,
                     ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  child: TextFormField(
-                    controller: passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(90.0),
-                      ),
-                      labelText: 'Your IMPACT Password',
-                      icon: Icon(Icons.lock),
+                    const SizedBox(
+                      width: 300,
+                      child: Image(
+                          fit: BoxFit.contain,
+                          isAntiAlias: false,
+                          filterQuality: FilterQuality.high,
+                          image: AssetImage('assets/images/ImpactLogo.png')),
                     ),
-                  ),
-                ),
-                Container(
-                  width: 110,
-                  child: ElevatedButton(
-                    child: Center(
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.login,
-                            size: 15,
-                            //color: Colors.white,
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        'In order to achieve a better experience we would like you to authorize the access to your FitBit data on Impact',
+                        style: TextStyle(fontSize: 15),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                      child: TextFormField(
+                        controller: usernameController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(90.0),
                           ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          const Text(
-                            'Authorize',
-                          )
-                        ],
+                          labelText: 'Your IMPACT Username',
+                          icon: const Icon(Icons.person),
+                        ),
                       ),
                     ),
-                    onPressed: () async {
-                      String usernameImpact = usernameController.text;
-                      String passwordImpact = passwordController.text;
-                      if (usernameImpact != '' && passwordImpact != '') {
-                        if (usernameImpact == Impact.username &&
-                            passwordImpact == Impact.password) {
-                          clearText();
-                          tokenManager.getAndStoreTokens();
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const MainPage()));
-                        } else {
-                          CustomSnackBar(
-                              context: context, message: 'Wrong credentials');
-                        }
-                      } else {
-                        CustomSnackBar(
-                            context: context,
-                            message:
-                                'Insert Impact ID and password to authorize');
-                      }
-                    },
-                  ),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                      child: TextFormField(
+                        controller: passwordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(90.0),
+                          ),
+                          labelText: 'Your IMPACT Password',
+                          icon: const Icon(Icons.lock),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      width: 110,
+                      child: ElevatedButton(
+                        child: Center(
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.app_registration_outlined,
+                                size: 15,
+                                //color: Colors.white,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                'Authorize',
+                              )
+                            ],
+                          ),
+                        ),
+                        onPressed: () async {
+                          String usernameImpact =
+                              usernameController.text.trim();
+                          String passwordImpact =
+                              passwordController.text.trim();
+                          if (usernameImpact != '' && passwordImpact != '') {
+                            if (usernameImpact == Impact.username &&
+                                passwordImpact == Impact.password) {
+                              clearText();
+                              tokenManager.getAndStoreTokens();
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const MainPage()));
+                            } else {
+                              CustomSnackBar(
+                                  context: context,
+                                  message: 'Wrong credentials');
+                            }
+                          } else {
+                            CustomSnackBar(
+                                context: context,
+                                message:
+                                    'Insert Impact ID and password to authorize');
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ));
