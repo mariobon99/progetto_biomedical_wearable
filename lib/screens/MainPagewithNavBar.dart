@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:progetto_wearable/repositories/databaseRepository.dart';
 import 'package:progetto_wearable/widgets/customSnackBar.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -49,12 +51,39 @@ class _MainPageState extends State<MainPage> {
         title: Text(titles[_selectedIndex]),
         centerTitle: true,
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(LineIcons.userCircle),
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: ((context) => ProfilePage())));
-            },
+          InkWell(
+            onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: ((context) => ProfilePage())));
+                    },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                
+                decoration: BoxDecoration(
+                  border: Border.all(color: Palette.white),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(width: 6,),
+                    Consumer<DatabaseRepository>(builder: (context, dbr, child) { 
+                      return FutureBuilder(future:dbr.findUserLevel(0), builder: (context,snapshot){
+                        final level = snapshot.data as int;
+                        if (snapshot.hasData) {return Text('Liv. $level', style: TextStyle(fontWeight: FontWeight.bold),);}
+                        else{
+                          return SizedBox(width:20,child: CircularProgressIndicator());
+                        }
+                      }) ;
+                      }),
+                    Icon(
+                      LineIcons.userCircle),
+                      SizedBox(width: 6,),
+                    
+                  ],
+                ),
+              ),
+            ),
           ),
         ],
       ),
