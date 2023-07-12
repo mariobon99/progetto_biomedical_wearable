@@ -27,6 +27,10 @@ class PlacePageState extends State<PlacePage> {
   List<Place> places = [];
   List distances = [];
   double? meanDistance = 100;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  final imageLink =
+      'https://static.vecteezy.com/ti/vettori-gratis/p3/5065038-mappa-e-icona-segnaletica-direzione-di-viaggio-luogo-sulla-mappa-segnato-con-simbolo-puntatore-mappa-piatta-destinazione-e-icona-segnaletica-illustratore-modificabile-a-colori-gratuito-vettoriale.jpg';
 
   @override
   void initState() {
@@ -41,47 +45,32 @@ class PlacePageState extends State<PlacePage> {
   }
 
   /// Determine the current position of the device
-  Future<void> _determinePosition() async {
+  Future<LocationPermission?> _determinePermission() async {
     // Test if location services are enabled.
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
-      print('Location services are disabled.');
-      return;
-    }
+    // bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    // if (!serviceEnabled) {
+    //   // Location services are not enabled don't continue
+    //   // accessing the position and request users of the
+    //   // App to enable the location services.
+    //   print('Location services are disabled.');
+    //   return null;
+    // }
 
     LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
-        print('Location permissions are denied');
-        return;
-      }
-    }
 
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      print(
-          'Location permissions are permanently denied, we cannot request permissions.');
+    return permission;
+  }
 
-      /// open app settings so that user changes permissions
-      // await Geolocator.openAppSettings();
-      // await Geolocator.openLocationSettings();
+  Future<void> _openGPSSettings() async {
+    await Geolocator.openAppSettings();
+    await Geolocator.openLocationSettings();
+  }
 
-      return;
-    }
-
-    // When we reach here, permissions are granted and we can
+  Future<void> _determinePosition() async {
+// When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
     Position position = await Geolocator.getCurrentPosition();
-    print("Current Position $position");
+    //print("Current Position $position");
     setState(() {
       _currentUserPosition = position;
     });
@@ -120,7 +109,14 @@ class PlacePageState extends State<PlacePage> {
     final tokenManager = TokenManager();
     final sp = await SharedPreferences.getInstance();
     final result = await tokenManager.requestData() as List<Activity>;
-    double resultMean = computeMean(result);
+    final level = await Provider.of<DatabaseRepository>(context, listen: false)
+        .findUserLevel(0);
+    double resultMean;
+    if (level == 3) {
+      resultMean = double.infinity;
+    } else {
+      resultMean = computeMean(result) * 0.5 * level!.toDouble();
+    }
     sp.setDouble('distance', resultMean);
     setState(() {
       meanDistance = resultMean;
@@ -140,7 +136,7 @@ class PlacePageState extends State<PlacePage> {
   }
 
   Widget _placeTile(Place place, double distance) {
-    bool condition = distance < (meanDistance! / 2);
+    bool condition = distance < (meanDistance!);
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: GestureDetector(
@@ -279,13 +275,44 @@ class PlacePageState extends State<PlacePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
-      child: ListView.builder(
-          itemCount: places.length,
-          itemBuilder: (context, index) {
-            return _placeTile(places[index], distances[index]);
-          }),
-    );
+    return FutureBuilder(
+        future: _determinePermission(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final permission = snapshot.data as LocationPermission;
+            if (permission == LocationPermission.denied ||
+                permission == LocationPermission.deniedForever) {
+              return Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'In order to our app to run,\n enable the GPS permission in your local app settings',
+                        style: TextStyle(fontSize: 15),
+                        textAlign: TextAlign.center,
+                      ),
+                      ElevatedButton(
+                          onPressed: () async {
+                            _openGPSSettings();
+                          },
+                          child: Text('Enable GPS'))
+                    ]),
+              );
+            } else {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+                child: ListView.builder(
+                    itemCount: places.length,
+                    itemBuilder: (context, index) {
+                      return _placeTile(places[index], distances[index]);
+                    }),
+              );
+            }
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
   }
 }

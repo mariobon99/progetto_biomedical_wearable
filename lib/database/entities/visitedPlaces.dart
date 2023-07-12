@@ -9,10 +9,10 @@ import 'package:progetto_wearable/database/entities/entities.dart';
       entity: User,
     ),
     ForeignKey(
-      childColumns: ['idPlace'],
-      parentColumns: ['id'],
-      entity: Place,
-    )
+        childColumns: ['idPlace'],
+        parentColumns: ['id'],
+        entity: Place,
+        onDelete: ForeignKeyAction.setNull)
   ],
 )
 class VisitedPlace {

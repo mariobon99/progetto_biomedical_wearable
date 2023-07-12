@@ -91,9 +91,9 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `User` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `username` TEXT NOT NULL, `password` TEXT NOT NULL, `email` TEXT NOT NULL, `level` INTEGER NOT NULL, `distance` REAL NOT NULL)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Place` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `imageLink` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `Place` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `imageLink` TEXT NOT NULL, `userMade` INTEGER NOT NULL, `description` TEXT NOT NULL)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `VisitedPlace` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `idUser` INTEGER NOT NULL, `idPlace` INTEGER NOT NULL, `distance` REAL, FOREIGN KEY (`idUser`) REFERENCES `User` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`idPlace`) REFERENCES `Place` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `VisitedPlace` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `idUser` INTEGER NOT NULL, `idPlace` INTEGER NOT NULL, `distance` REAL, FOREIGN KEY (`idUser`) REFERENCES `User` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`idPlace`) REFERENCES `Place` (`id`) ON UPDATE NO ACTION ON DELETE SET NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -145,18 +145,6 @@ class _$UsersDao extends UsersDao {
                   'email': item.email,
                   'level': item.level,
                   'distance': item.distance
-                }),
-        _userDeletionAdapter = DeletionAdapter(
-            database,
-            'User',
-            ['id'],
-            (User item) => <String, Object?>{
-                  'id': item.id,
-                  'username': item.username,
-                  'password': item.password,
-                  'email': item.email,
-                  'level': item.level,
-                  'distance': item.distance
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -169,8 +157,6 @@ class _$UsersDao extends UsersDao {
 
   final UpdateAdapter<User> _userUpdateAdapter;
 
-  final DeletionAdapter<User> _userDeletionAdapter;
-
   @override
   Future<List<User>> findAllUsers() async {
     return _queryAdapter.queryList('SELECT * FROM User ORDER BY distance DESC',
@@ -181,6 +167,25 @@ class _$UsersDao extends UsersDao {
             row['email'] as String,
             row['level'] as int,
             row['distance'] as double));
+  }
+
+  @override
+  Future<User?> findUserById(int id) async {
+    return _queryAdapter.query('SELECT * FROM User WHERE id=?1',
+        mapper: (Map<String, Object?> row) => User(
+            row['id'] as int?,
+            row['username'] as String,
+            row['password'] as String,
+            row['email'] as String,
+            row['level'] as int,
+            row['distance'] as double),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> deleteUser(int id) async {
+    await _queryAdapter
+        .queryNoReturn('DELETE FROM User WHERE id = ?1', arguments: [id]);
   }
 
   @override
@@ -208,6 +213,16 @@ class _$UsersDao extends UsersDao {
   }
 
   @override
+  Future<void> updateUserLevel(
+    int id,
+    int newLevel,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE User SET level = ?2 WHERE id  = ?1',
+        arguments: [id, newLevel]);
+  }
+
+  @override
   Future<void> insertUser(User user) async {
     await _userInsertionAdapter.insert(user, OnConflictStrategy.replace);
   }
@@ -215,11 +230,6 @@ class _$UsersDao extends UsersDao {
   @override
   Future<void> updateUser(User user) async {
     await _userUpdateAdapter.update(user, OnConflictStrategy.replace);
-  }
-
-  @override
-  Future<void> deleteUser(User user) async {
-    await _userDeletionAdapter.delete(user);
   }
 }
 
@@ -236,7 +246,9 @@ class _$PlacesDao extends PlacesDao {
                   'name': item.name,
                   'latitude': item.latitude,
                   'longitude': item.longitude,
-                  'imageLink': item.imageLink
+                  'imageLink': item.imageLink,
+                  'userMade': item.userMade ? 1 : 0,
+                  'description': item.description
                 }),
         _placeUpdateAdapter = UpdateAdapter(
             database,
@@ -247,7 +259,9 @@ class _$PlacesDao extends PlacesDao {
                   'name': item.name,
                   'latitude': item.latitude,
                   'longitude': item.longitude,
-                  'imageLink': item.imageLink
+                  'imageLink': item.imageLink,
+                  'userMade': item.userMade ? 1 : 0,
+                  'description': item.description
                 }),
         _placeDeletionAdapter = DeletionAdapter(
             database,
@@ -258,7 +272,9 @@ class _$PlacesDao extends PlacesDao {
                   'name': item.name,
                   'latitude': item.latitude,
                   'longitude': item.longitude,
-                  'imageLink': item.imageLink
+                  'imageLink': item.imageLink,
+                  'userMade': item.userMade ? 1 : 0,
+                  'description': item.description
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -281,7 +297,9 @@ class _$PlacesDao extends PlacesDao {
             row['name'] as String?,
             row['latitude'] as double,
             row['longitude'] as double,
-            row['imageLink'] as String));
+            row['imageLink'] as String,
+            row['description'] as String,
+            (row['userMade'] as int) != 0));
   }
 
   @override
@@ -292,13 +310,28 @@ class _$PlacesDao extends PlacesDao {
             row['name'] as String?,
             row['latitude'] as double,
             row['longitude'] as double,
-            row['imageLink'] as String),
+            row['imageLink'] as String,
+            row['description'] as String,
+            (row['userMade'] as int) != 0),
         arguments: [name]);
   }
 
   @override
+  Future<List<Place>?> findUsermadePlaces() async {
+    return _queryAdapter.queryList('SELECT * FROM Place WHERE userMade = true',
+        mapper: (Map<String, Object?> row) => Place(
+            row['id'] as int?,
+            row['name'] as String?,
+            row['latitude'] as double,
+            row['longitude'] as double,
+            row['imageLink'] as String,
+            row['description'] as String,
+            (row['userMade'] as int) != 0));
+  }
+
+  @override
   Future<void> insertPlace(Place place) async {
-    await _placeInsertionAdapter.insert(place, OnConflictStrategy.abort);
+    await _placeInsertionAdapter.insert(place, OnConflictStrategy.replace);
   }
 
   @override
@@ -335,16 +368,6 @@ class _$VisitedPlaceDao extends VisitedPlaceDao {
                   'idUser': item.idUser,
                   'idPlace': item.idPlace,
                   'distance': item.distance
-                }),
-        _visitedPlaceDeletionAdapter = DeletionAdapter(
-            database,
-            'VisitedPlace',
-            ['id'],
-            (VisitedPlace item) => <String, Object?>{
-                  'id': item.id,
-                  'idUser': item.idUser,
-                  'idPlace': item.idPlace,
-                  'distance': item.distance
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -357,8 +380,6 @@ class _$VisitedPlaceDao extends VisitedPlaceDao {
 
   final UpdateAdapter<VisitedPlace> _visitedPlaceUpdateAdapter;
 
-  final DeletionAdapter<VisitedPlace> _visitedPlaceDeletionAdapter;
-
   @override
   Future<List<VisitedPlace>> findAllVisitedPlaces() async {
     return _queryAdapter.queryList('SELECT * FROM VisitedPlace',
@@ -367,6 +388,13 @@ class _$VisitedPlaceDao extends VisitedPlaceDao {
             row['idUser'] as int,
             row['idPlace'] as int,
             row['distance'] as double?));
+  }
+
+  @override
+  Future<void> deleteVisitedPlace(int idUser) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM VisitedPlace WHERE idUser = ?1',
+        arguments: [idUser]);
   }
 
   @override
@@ -390,14 +418,6 @@ class _$VisitedPlaceDao extends VisitedPlaceDao {
   }
 
   @override
-  Future<int?> findNumPlaces(int idUser) async {
-    return _queryAdapter.query(
-        'SELECT COUNT(*) FROM VisitedPlace WHERE idUser=?1',
-        mapper: (Map<String, Object?> row) => row.values.first as int,
-        arguments: [idUser]);
-  }
-
-  @override
   Future<void> insertVisitedPlace(VisitedPlace visitedPlace) async {
     await _visitedPlaceInsertionAdapter.insert(
         visitedPlace, OnConflictStrategy.abort);
@@ -407,10 +427,5 @@ class _$VisitedPlaceDao extends VisitedPlaceDao {
   Future<void> updateUVisitedPlace(VisitedPlace visitedPlace) async {
     await _visitedPlaceUpdateAdapter.update(
         visitedPlace, OnConflictStrategy.replace);
-  }
-
-  @override
-  Future<void> deleteVisitedPlace(VisitedPlace visitedPlace) async {
-    await _visitedPlaceDeletionAdapter.delete(visitedPlace);
   }
 }

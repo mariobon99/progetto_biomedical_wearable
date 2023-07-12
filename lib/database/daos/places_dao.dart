@@ -12,7 +12,7 @@ abstract class PlacesDao {
   Future<Place?> findPlaceByName(String name);
 
   //Query that allows to insert a new Place in the table
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertPlace(Place place);
 
   //Query that allows to delete a Place from the table
@@ -22,4 +22,7 @@ abstract class PlacesDao {
 //Query that allows to update a Place
   @Update(onConflict: OnConflictStrategy.replace)
   Future<void> updatePlace(Place place);
+
+  @Query('SELECT * FROM Place WHERE userMade = true')
+  Future<List<Place>?> findUsermadePlaces();
 }

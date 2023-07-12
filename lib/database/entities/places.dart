@@ -15,7 +15,10 @@ class Place {
   final double longitude;
 
   final String imageLink;
+  final bool userMade;
+  final String description;
 
   //Default constructor
-  Place(this.id, this.name, this.latitude, this.longitude, this.imageLink);
+  Place(this.id, this.name, this.latitude, this.longitude, this.imageLink,
+      this.description, this.userMade);
 } //Place

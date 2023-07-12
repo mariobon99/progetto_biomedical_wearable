@@ -6,10 +6,10 @@ ScaffoldMessengerState CustomSnackBar(
   return ScaffoldMessenger.of(context)
     ..clearSnackBars()
     ..showSnackBar(SnackBar(
-      backgroundColor: Palette.mainColorShade,
+      backgroundColor: Palette.darkGrey,
       content: Text(
         message,
-        style: const TextStyle(fontSize: 15, color: Palette.black),
+        style: const TextStyle(fontSize: 15, color: Palette.white),
       ),
       duration: const Duration(seconds: 2),
     ));
