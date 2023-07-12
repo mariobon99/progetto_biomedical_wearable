@@ -12,8 +12,8 @@ abstract class VisitedPlaceDao {
   Future<void> insertVisitedPlace(VisitedPlace visitedPlace);
 
   //Query that allows to delete a User from the table
-  @delete
-  Future<void> deleteVisitedPlace(VisitedPlace visitedPlace);
+  @Query('DELETE FROM VisitedPlace WHERE idUser = :idUser')
+  Future<void> deleteVisitedPlace(int idUser);
 
   //Query that allows to update user's data
   @Update(onConflict: OnConflictStrategy.replace)
@@ -26,5 +26,4 @@ abstract class VisitedPlaceDao {
   @Query(
       'SELECT DISTINCT COUNT(idPlace) FROM VisitedPlace WHERE idUser = :idUser')
   Future<int?> findVisitedPlacesByUser(int idUser);
-
 }

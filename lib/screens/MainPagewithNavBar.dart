@@ -1,5 +1,8 @@
+import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
+import 'package:progetto_wearable/repositories/databaseRepository.dart';
 import 'package:progetto_wearable/widgets/customSnackBar.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -15,11 +18,11 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
-  bool? _authorization;
+  bool _authorization = false;
   List<String> titles = [
     'Home',
     'Place finder',
-    'Insert a new place',
+    'Add a new place',
     'Community'
   ];
   PageController pageController = PageController(
@@ -29,7 +32,7 @@ class _MainPageState extends State<MainPage> {
 
   void checkImpactAuthorization() async {
     final sp = await SharedPreferences.getInstance();
-    bool auth = sp.getString('refresh') != null;
+    bool auth = sp.getString('refresh') != '';
     setState(() {
       _authorization = auth;
     });
@@ -66,7 +69,7 @@ class _MainPageState extends State<MainPage> {
           });
         },
         children: [
-          const HomePage(),
+          HomePage(),
           PlacePage(
             onPageChange: (index) {
               setState(() {
@@ -77,7 +80,7 @@ class _MainPageState extends State<MainPage> {
               });
             },
           ),
-          const AdvisePage(),
+          const AddPlacePage(),
           CommunityPage()
         ],
       ),
@@ -104,29 +107,9 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
                 ListTile(
-                    title: const Text('Profile'),
-                    trailing: const Icon(LineIcons.userCircle),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfilePage(),
-                          ));
-                    }),
-                ListTile(
-                    title: const Text('Logout'),
-                    trailing: const Icon(Icons.logout),
-                    onTap: () {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LoginPage(),
-                          ));
-                    }),
-                ListTile(
                     title: const Text('Impact authorization'),
                     trailing: Switch(
-                      value: _authorization!,
+                      value: _authorization,
                       onChanged: (value) async {
                         setState(() {
                           _authorization = value;
@@ -147,6 +130,55 @@ class _MainPageState extends State<MainPage> {
                         }
                       },
                     )),
+                ListTile(
+                    title: const Text('Logout'),
+                    trailing: const Icon(Icons.logout),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginPage(),
+                          ));
+                    }),
+                ListTile(
+                    title: const Text('Delete account'),
+                    trailing: const Icon(Icons.delete),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Delete the account'),
+                          content: Text(
+                              'Are you sure? All the progresses will be lost. '),
+                          actions: [
+                            TextButton(
+                                onPressed: () async {
+                                  final sp =
+                                      await SharedPreferences.getInstance();
+                                  await sp.clear();
+                                  await Provider.of<DatabaseRepository>(context,
+                                          listen: false)
+                                      .deleteVisitedPlace(0);
+                                  await Provider.of<DatabaseRepository>(context,
+                                          listen: false)
+                                      .deleteUser(0);
+
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => LoginPage(),
+                                      ));
+                                },
+                                child: Text('Yes, delete')),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text('No'))
+                          ],
+                        ),
+                      );
+                    }),
                 ListTile(
                   title: const Text('Info'),
                   trailing: const Icon(Icons.info_outline),

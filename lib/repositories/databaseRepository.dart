@@ -17,6 +17,11 @@ class DatabaseRepository extends ChangeNotifier {
     return users;
   }
 
+  Future<User?> findUserById(int id) async {
+    final user = await database.usersDao.findUserById(id);
+    return user;
+  }
+
   Future<double?> findUserDistance(int id) async {
     final distance = await database.usersDao.findUserDistance(id);
     return distance;
@@ -30,6 +35,15 @@ class DatabaseRepository extends ChangeNotifier {
   Future<void> updateUserDistance(int id, double amount) async {
     await database.usersDao.updateUserDistance(id, amount);
     notifyListeners();
+  }
+
+  Future<void> updateUserLevel(int id, int newLevel) async {
+    await database.usersDao.updateUserLevel(id, newLevel);
+    notifyListeners();
+  }
+
+  Future<void> deleteUser(int id) async {
+    await database.usersDao.deleteUser(id);
   }
 
   // Places queries
@@ -49,10 +63,20 @@ class DatabaseRepository extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<List<Place>?> findUsermadePlaces() async {
+    final listPlaces = database.placesDao.findUsermadePlaces();
+    return listPlaces;
+  }
+
   // VisitedPlace queries
   Future<List<VisitedPlace>> findAllVisitedPlaces() async {
     final places = await database.visitedPlacesDao.findAllVisitedPlaces();
     return places;
+  }
+
+  Future<void> deleteVisitedPlace(int id) async {
+    await database.visitedPlacesDao.deleteVisitedPlace(id);
+    notifyListeners();
   }
 
   Future<void> insertVisitedPlace(VisitedPlace visitedPlace) async {
@@ -70,4 +94,3 @@ class DatabaseRepository extends ChangeNotifier {
     return await database.visitedPlacesDao.findAllPlacesByAUser(idUser);
   }
 }
-

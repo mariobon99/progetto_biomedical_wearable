@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:progetto_wearable/repositories/databaseRepository.dart';
-import 'package:progetto_wearable/screens/LoginPage.dart';
+import 'screens/screens.dart';
 import 'package:progetto_wearable/utils/utils.dart';
 import 'database/database.dart';
 import 'package:provider/provider.dart';
