@@ -17,7 +17,7 @@ class CustomAlert extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Container(
-        height: 500,
+        height: 450,
         child: Column(
           children: <Widget>[
             Container(
@@ -47,6 +47,7 @@ class CustomAlert extends StatelessWidget {
               ),
             ),
             Expanded(
+              flex: 2,
               child: Scrollbar(
                 child: SingleChildScrollView(
                   child: Container(
