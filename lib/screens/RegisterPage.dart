@@ -142,7 +142,6 @@ class RegisterPage extends StatelessWidget {
                             User user = User(
                                 0,
                                 usernameController.text,
-                                passwordController.text,
                                 mailController.text,
                                 1,
                                 0);

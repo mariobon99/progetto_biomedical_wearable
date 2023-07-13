@@ -89,7 +89,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `User` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `username` TEXT NOT NULL, `password` TEXT NOT NULL, `email` TEXT NOT NULL, `level` INTEGER NOT NULL, `distance` REAL NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `User` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `level` INTEGER NOT NULL, `distance` REAL NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Place` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `imageLink` TEXT NOT NULL, `userMade` INTEGER NOT NULL, `description` TEXT NOT NULL)');
         await database.execute(
@@ -129,7 +129,6 @@ class _$UsersDao extends UsersDao {
             (User item) => <String, Object?>{
                   'id': item.id,
                   'username': item.username,
-                  'password': item.password,
                   'email': item.email,
                   'level': item.level,
                   'distance': item.distance
@@ -141,7 +140,6 @@ class _$UsersDao extends UsersDao {
             (User item) => <String, Object?>{
                   'id': item.id,
                   'username': item.username,
-                  'password': item.password,
                   'email': item.email,
                   'level': item.level,
                   'distance': item.distance
@@ -163,7 +161,6 @@ class _$UsersDao extends UsersDao {
         mapper: (Map<String, Object?> row) => User(
             row['id'] as int?,
             row['username'] as String,
-            row['password'] as String,
             row['email'] as String,
             row['level'] as int,
             row['distance'] as double));
@@ -175,7 +172,6 @@ class _$UsersDao extends UsersDao {
         mapper: (Map<String, Object?> row) => User(
             row['id'] as int?,
             row['username'] as String,
-            row['password'] as String,
             row['email'] as String,
             row['level'] as int,
             row['distance'] as double),

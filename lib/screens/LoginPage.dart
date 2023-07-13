@@ -192,7 +192,7 @@ class LoginPage extends StatelessWidget {
                 const SizedBox(
                   height: 40,
                 ),
-                Text('The custom icons used in this app are provided by flaticon', style: TextStyle(color: Palette.grey),),
+                Text('The custom icons used in this app are provided by flaticon.com', style: TextStyle(color: Palette.grey),),
               ],
             
             ),

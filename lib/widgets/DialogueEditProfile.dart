@@ -87,9 +87,9 @@ Future openDialog(BuildContext context) => showDialog(
                             await saveEmail(emailController.text);
 
                             //Aggiornare i valori nel database
-                            Provider.of<DatabaseRepository>(context, listen: false)
+                            await Provider.of<DatabaseRepository>(context, listen: false)
                               .updateUserUsername(0, usernameController.text);
-                            Provider.of<DatabaseRepository>(context, listen: false)
+                            await Provider.of<DatabaseRepository>(context, listen: false)
                               .updateUserEmail(0, emailController.text);
                             // ignore: use_build_context_synchronously
                             
