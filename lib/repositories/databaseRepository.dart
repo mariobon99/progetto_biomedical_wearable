@@ -46,6 +46,16 @@ class DatabaseRepository extends ChangeNotifier {
     await database.usersDao.deleteUser(id);
   }
 
+  Future<void> updateUserUsername(int id, String newUsername) async {
+  await database.usersDao.updateUserUsername(id, newUsername);
+  notifyListeners();
+  }
+
+  Future<void> updateUserEmail(int id, String newEmail) async {
+  await database.usersDao.updateUserEmail(id, newEmail);
+  notifyListeners();
+  }
+
   // Places queries
 
   Future<List<Place>> findAllPlaces() async {

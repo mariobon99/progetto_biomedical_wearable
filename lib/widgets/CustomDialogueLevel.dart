@@ -17,7 +17,7 @@ class CustomAlert extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Container(
-        height: 450,
+        height: 448,
         child: Column(
           children: <Widget>[
             Container(
@@ -48,38 +48,36 @@ class CustomAlert extends StatelessWidget {
             ),
             Expanded(
               flex: 2,
-              child: Scrollbar(
-                child: SingleChildScrollView(
-                  child: Container(
-                    color: Palette.tertiaryColor,
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            description,
-                            style: const TextStyle(
+              child: SingleChildScrollView(
+                child: Container(
+                  color: Palette.tertiaryColor,
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          description,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            'OK!',
+                            style: TextStyle(
                               fontSize: 16,
-                              color: Colors.white,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text(
-                              'OK!',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

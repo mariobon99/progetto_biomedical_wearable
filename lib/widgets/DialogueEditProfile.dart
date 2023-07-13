@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:progetto_wearable/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:progetto_wearable/utils/palette.dart';
+
+
+import 'package:progetto_wearable/repositories/databaseRepository.dart';
+import 'package:provider/provider.dart';
 
 final TextEditingController usernameController = TextEditingController();
 final TextEditingController passwordController = TextEditingController();
@@ -75,10 +81,18 @@ Future openDialog(BuildContext context) => showDialog(
                     TextButton(
                       onPressed: () async {
                           if (_formKey.currentState!.validate()) {
+                            //Aggiornare shared preferences
                             await saveUsername(usernameController.text);
                             await savePassword(passwordController.text);
                             await saveEmail(emailController.text);
+
+                            //Aggiornare i valori nel database
+                            Provider.of<DatabaseRepository>(context, listen: false)
+                              .updateUserUsername(0, usernameController.text);
+                            Provider.of<DatabaseRepository>(context, listen: false)
+                              .updateUserEmail(0, emailController.text);
                             // ignore: use_build_context_synchronously
+                            
                             Navigator.pop(context);
 
                             // Azzera i controller dei campi di testo
@@ -90,7 +104,7 @@ Future openDialog(BuildContext context) => showDialog(
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Your edits has been saved!'),
-                                backgroundColor: Colors.grey,
+                                backgroundColor: Palette.grey,
                               ),
                             );
                           } //if

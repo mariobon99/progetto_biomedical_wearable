@@ -175,7 +175,7 @@ class RegisterPage extends StatelessWidget {
                               passwordController2.text) {
                             CustomSnackBar(
                                 context: context,
-                                message: 'The two passords are different');
+                                message: 'The two passwords are different');
                           } else {
                             CustomSnackBar(
                                 context: context, message: 'Fill all fields');

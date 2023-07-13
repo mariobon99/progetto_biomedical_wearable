@@ -223,6 +223,26 @@ class _$UsersDao extends UsersDao {
   }
 
   @override
+  Future<void> updateUserUsername(
+    int id,
+    String newUsername,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE User SET username  = ?2 WHERE id  = ?1',
+        arguments: [id, newUsername]);
+  }
+
+  @override
+  Future<void> updateUserEmail(
+    int id,
+    String newEmail,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE User SET email  = ?2 WHERE id  = ?1',
+        arguments: [id, newEmail]);
+  }
+
+  @override
   Future<void> insertUser(User user) async {
     await _userInsertionAdapter.insert(user, OnConflictStrategy.replace);
   }

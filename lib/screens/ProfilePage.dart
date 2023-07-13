@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:progetto_wearable/database/entities/entities.dart';
 import 'package:progetto_wearable/screens/AchievmentsPage.dart';
 import 'package:progetto_wearable/screens/EditProfilePage.dart';
 import 'package:progetto_wearable/utils/palette.dart';
@@ -68,10 +69,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   actions: <Widget>[
                       IconButton(
                         onPressed: (){
-                          openDialog(context).then((value) {
+                          openDialog(context).then((value) async {
                               // Aggiorna i dati quando si torna da Edit Profile
                               loadSavedValues();
-                            });
+
+                              User? user = await Provider.of<DatabaseRepository>(context,
+                              listen: false)
+                              .findUserById(0);
+                              print(user?.username);
+                            }
+                            );
                         },
                         icon: const Icon(Icons.edit))
                   ],
