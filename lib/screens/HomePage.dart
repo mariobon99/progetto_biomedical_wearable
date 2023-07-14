@@ -194,7 +194,7 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(15.0),
         child: Column(
           children: [
-            // first box with activity
+            // first box with activity in progress
             GestureDetector(
                 onDoubleTap: _endActivity,
                 onLongPress: () {
