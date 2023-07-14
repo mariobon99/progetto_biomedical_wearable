@@ -54,33 +54,43 @@ class _MainPageState extends State<MainPage> {
         actions: <Widget>[
           InkWell(
             onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: ((context) => ProfilePage())));
-                    },
+              Navigator.push(context,
+                  MaterialPageRoute(builder: ((context) => ProfilePage())));
+            },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                
                 decoration: BoxDecoration(
                   border: Border.all(color: Palette.white),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: [
-                    SizedBox(width: 6,),
-                    Consumer<DatabaseRepository>(builder: (context, dbr, child) { 
-                      return FutureBuilder(future:dbr.findUserLevel(0), builder: (context,snapshot){
-                        final level = snapshot.data as int;
-                        if (snapshot.hasData) {return Text('Liv. $level', style: TextStyle(fontWeight: FontWeight.bold),);}
-                        else{
-                          return SizedBox(width:20,child: CircularProgressIndicator());
-                        }
-                      }) ;
-                      }),
-                    Icon(
-                      LineIcons.userCircle),
-                      SizedBox(width: 6,),
-                    
+                    SizedBox(
+                      width: 6,
+                    ),
+                    Consumer<DatabaseRepository>(
+                        builder: (context, dbr, child) {
+                      return FutureBuilder(
+                          future: dbr.findUserLevel(0),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              final level = snapshot.data as int;
+                              return Text(
+                                'Liv. $level',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              );
+                            } else {
+                              return SizedBox(
+                                  width: 20,
+                                  child: CircularProgressIndicator());
+                            }
+                          });
+                    }),
+                    Icon(LineIcons.userCircle),
+                    SizedBox(
+                      width: 6,
+                    ),
                   ],
                 ),
               ),
@@ -127,7 +137,7 @@ class _MainPageState extends State<MainPage> {
                   ),
                   child: const DrawerHeader(
                     child: Text(
-                      'Sustainable Padua',
+                      'PaduaGo!',
                       style:
                           TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                     ),
@@ -189,7 +199,7 @@ class _MainPageState extends State<MainPage> {
                                   await Provider.of<DatabaseRepository>(context,
                                           listen: false)
                                       .deleteUser(0);
-
+                                  Navigator.pop(context);
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
