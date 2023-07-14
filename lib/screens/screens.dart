@@ -1,6 +1,5 @@
 export 'AdvicePage.dart';
 export 'ComunityPage.dart';
-export 'EditProfilePage.dart';
 export 'HomePage.dart';
 export 'LoginImpactPage.dart';
 export 'LoginPage.dart';

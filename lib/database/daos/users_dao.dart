@@ -37,6 +37,16 @@ abstract class UsersDao {
   @Query('UPDATE User SET distance = distance + :amount WHERE id = :id')
   Future<void> updateUserDistance(int id, double amount);
 
+  //Query tha allows to update the distance of a user
   @Query('UPDATE User SET level = :newLevel WHERE id  = :id')
   Future<void> updateUserLevel(int id, int newLevel);
+
+  //Query that allows to update the username
+  @Query('UPDATE User SET username  = :newUsername WHERE id  = :id')
+  Future<void> updateUserUsername(int id, String newUsername);
+
+  //Query that allows to update the email
+  @Query('UPDATE User SET email  = :newEmail WHERE id  = :id')
+  Future<void> updateUserEmail(int id, String newEmail);
+
 }

@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import '../database/entities/entities.dart';
 import '../utils/utils.dart';
 import 'dart:io';
+import '../widgets/customSnackBar.dart';
+
 
 class AddPlacePage extends StatefulWidget {
   const AddPlacePage({super.key});
@@ -29,106 +31,82 @@ class _AddPlacePageState extends State<AddPlacePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<DatabaseRepository>(
-        builder: (context, dbr, child) {
-          return FutureBuilder(
-              future: dbr.findUsermadePlaces(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.data!.isEmpty) {
-                    return const Center(
-                      child: Text('Add some new place'),
-                    );
-                  } else {
-                    final listplaces = snapshot.data as List<Place>;
-                    return ListView.builder(
-                      itemCount: listplaces.length,
-                      padding: const EdgeInsets.all(4),
-                      itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(colors: [
-                                Palette.mainColor,
-                                Palette.mainColorShade
-                              ]),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: ListTile(
-                            title: Text('${listplaces[index].name}'),
-                            subtitle: Text('${listplaces[index].description}'),
-                            trailing: listplaces[index]
-                                    .imageLink
-                                    .contains('http')
-                                ? Image.network(listplaces[index].imageLink)
-                                : Image.file(File(listplaces[index].imageLink)),
-                            tileColor: Palette.mainColorShade,
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              });
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        foregroundColor: Colors.orange,
-        backgroundColor: Palette.mainColorShade,
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                    title: const Text(
-                        'Insert your new place name and description'),
-                    content: SizedBox(
-                      height: 200,
-                      child: Column(children: [
-                        TextFormField(
-                            controller: nameController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your new email or cancel';
-                              }
-                              return null;
-                            },
-                            enabled: true,
-                            decoration: const InputDecoration(
-                                helperText: 'Enter the place name'),
-                            autofocus: true),
-                        TextFormField(
-                            controller: descriptionController,
-                            enabled: true,
-                            decoration: const InputDecoration(
-                                helperText:
-                                    'Write a brief description of the place'),
-                            autofocus: true),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                              onTap: () async {
-                                setState(() {
-                                  _image = null;
-                                });
-                                var source = ImageSource.camera;
-
-                                XFile image = await ImagePicker().pickImage(
-                                    source: source,
-                                    imageQuality: 50,
-                                    preferredCameraDevice:
-                                        CameraDevice.front) as XFile;
-
-                                setState(() {
-                                  _image = image.path;
-                                });
+      body:  SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Palette.mainColor),
+                  color: Palette.mainColorShade),
+            child: Column(
+               mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const SizedBox(height: 10,),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Here you can insert your favorite spots of Padua and write a brief description to share with the community', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),textAlign: TextAlign.center,),
+                  ),
+                  const SizedBox(height: 20,),
+                   SizedBox(
+                    width: 350,
+                     child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                       child: Image(
+                           fit: BoxFit.contain,
+                           isAntiAlias: false,
+                           filterQuality: FilterQuality.high,
+                           image: AssetImage('assets/images/scorcio.jpg')),
+                     ),
+                   ),
+                  //const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    child: TextFormField(
+                      controller: nameController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your new email or cancel';
+                                }
+                                return null;
+                              },
+                              enabled: true,
+                              decoration: const InputDecoration(
+                                  helperText: 'Enter the place name'),
+                              autofocus: true
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    child: TextFormField(
+                      controller: descriptionController,
+                              enabled: true,
+                              decoration: const InputDecoration(
+                                  helperText:
+                                      'Write a brief description of the place (optional)'),
+                              autofocus: true
+                    ),
+                  ),
+                  const SizedBox(height: 20,),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            var source = ImageSource.camera;
+                  
+                             XFile image = await ImagePicker().pickImage(
+                                source: source,
+                                imageQuality: 50,
+                                preferredCameraDevice:
+                                    CameraDevice.front) as XFile;
+                  
+                  
+                                  setState(() {
+                                    _image =image.path;
+                                  });
+                              
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(5.0),
@@ -145,57 +123,62 @@ class _AddPlacePageState extends State<AddPlacePage> {
                             const SizedBox(
                               width: 20,
                             ),
-                            const Text('Add a photo of the place'),
+                            Text('Add a photo of the place'),
+                            SizedBox(width: 10,),
+                            _image!=null ? 
+                            Icon(Icons.done, color: Palette.mainColor,): Container(),
                           ],
                         ),
-                      ]),
-                    ),
-                    actions: [
-                      TextButton(
-                          onPressed: () async {
-                            final Position? position =
-                                await Geolocator.getCurrentPosition();
-                            if (position == null) {
-                              CustomSnackBar(
-                                  context: context,
-                                  message: 'Enable GPS services');
-                              Navigator.pop(context);
-                              return;
-                            }
-                            if (nameController.text == '') {
-                              CustomSnackBar(
-                                  context: context,
-                                  message:
-                                      'Name must be given to enter a new place');
-                              Navigator.pop(context);
-                              return;
-                            }
-                            final latitude = position.latitude;
-                            final longitude = position.longitude;
-                            Place newPlace = Place(
-                                null,
-                                nameController.text,
-                                latitude,
-                                longitude,
-                                _image ?? imageLink,
-                                descriptionController.text,
-                                true);
-                            clearText();
-                            await Provider.of<DatabaseRepository>(context,
-                                    listen: false)
-                                .insertPlace(newPlace);
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Add')),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Cancel')),
-                    ],
-                  ));
-        },
-        child: const Icon(Icons.add_location_rounded),
+                  ),
+                  const SizedBox(height: 30,),
+                ],
+            ),
+          ),
+        ),
+      ),
+      
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: SizedBox(
+        height: 60,
+        width: 120,
+        child: FloatingActionButton.extended(
+          elevation: 10,
+        label: Text('ADD'),
+         foregroundColor: Palette.userColor,
+         backgroundColor: Palette.mainColorShade,
+          onPressed: () async {
+              if(nameController.text==""){
+                  CustomSnackBar(context: context, message: 'Enter a name to add a place');
+                  return;
+              }//if
+                 
+                final Position? position =await Geolocator.getCurrentPosition();
+                if(position==null){
+                  CustomSnackBar(context: context, message: 'Enable GPS services');
+                  return;
+                }
+                final latitude = position.latitude;
+                final longitude = position.longitude;
+                  Place newPlace = Place(
+                                  null,
+                                  nameController.text,
+                                  latitude,
+                                  longitude,
+                                  _image ?? imageLink,
+                                  descriptionController.text,
+                                  true);
+                  clearText();
+                  setState(() {
+                    _image=null;
+                  });
+                  await Provider.of<DatabaseRepository>(context,
+                          listen: false)
+                      .insertPlace(newPlace);       
+              },
+           
+      
+          icon: Icon(Icons.add_location_rounded),
+        ),
       ),
     );
   }

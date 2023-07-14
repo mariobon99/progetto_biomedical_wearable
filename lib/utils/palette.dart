@@ -11,4 +11,5 @@ class Palette {
   static const white = Colors.white;
   static const darkGrey = Colors.blueGrey;
   static const grey = Colors.grey;
+  static const userColor = Colors.orange;
 }

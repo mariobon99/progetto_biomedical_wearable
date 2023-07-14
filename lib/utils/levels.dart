@@ -1,18 +1,17 @@
 class Levels {
-  static const String title1 = 'Livello Bradipo!';
+  static const String title1 = 'Sloth level!';
   static const String imagePath1 = 'assets/images/Bradipo.jpeg';
   static const String description1 =
-      'Sei un vero e proprio bradipo! Sei così rilassato e tranquillo che sembra che tu stia meditando mentre cammini! Le tue mosse sono così lente che le formiche ti superano facilmente. Ma non preoccuparti, abbiamo dei luoghi per te dove potrai goderti il tuo ritmo lento e rilassato. Non hai bisogno di fretta quando si tratta di divertirti.';
+      'You are a real sloth!\n Just like sloths, you love to sleep, and you move extremely slowly; in fact, sloths are among the slowest animals on earth, moving at a speed of 250 metres per hour. But don\'t worry, we have places where you can enjoy your slow and relaxed pace. There is no need to run when it comes to having fun.';
 
-  static const String title2 = 'Livello Gazzella!';
+  static const String title2 = 'Gazelle level !';
   static const String imagePath2 = 'assets/images/Gazzella.jpeg';
   static const String description2 =
-      'Sei una gazzella inarrestabile! \nSalti, corri e balli ovunque tu vada. Sei un vero e proprio spettacolo da vedere e la tua energia contagiosa ispira tutti quelli intorno a te. Hai un\'attenzione incredibile per i dettagli, proprio come la gazzella che sfrutta ogni opportunità.\nTi mostreremo i luoghi più vivaci di Padova, dove potrai saltellare felice come una gazzella.';
-  
-  static const String title3 = 'Livello Ghepardo!';
+    'You are an unstoppable gazelle!\n You jump, run and dance wherever you go with irrepressible energy. The gazelle can reach speeds of up to 85 km/h to evade predators; just like this fast mammal, you prefer open spaces where you can jump freely. We will show you the liveliest places in Padua where you can merrily romp around like a gazelle.';
+  static const String title3 = 'Cheetah level!';
   static const String imagePath3 = 'assets/images/Ghepardo.jpeg';
   static const String description3 =
-    'Sei un ghepardo supersprint! \nLa tua velocità è leggendaria e nessuno riesce a tenerti il passo. Vedi un obiettivo e lo raggiungi in un batter d\' occhio. Sei unvero eserto nel trascinare gli amici pigri a fare attività fisica.\nAbbiamo selezionato dei luoghi perfetti per te, dove potrai mettere all aprova la tua velocità e goderti l\'adrenalina della corsa come un vero ghepardo';
+    '´You are a supersprint cheetah!\nCheetahs are the fastest mammals on earth and can exceed 110 km/h in just over 3 seconds. Just like cheetahs, no one can keep up with you and you are a true expert in physical activity. We have selected the perfect places for you to test your legendary speed and enjoy an adrenaline rush.';
 }
 
 
