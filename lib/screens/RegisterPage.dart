@@ -196,7 +196,7 @@ class RegisterPage extends StatelessWidget {
                                   1,
                                   0);
                 
-                              Provider.of<DatabaseRepository>(context,
+                              await Provider.of<DatabaseRepository>(context,
                                       listen: false)
                                   .insertUser(user);
                 
@@ -209,7 +209,7 @@ class RegisterPage extends StatelessWidget {
                                     allplaces[i]['latitudine'],
                                     allplaces[i]['longitudine'],
                                     allplaces[i]['image'],
-                                    'Ciao',
+                                    allplaces[i]['description'],
                                     false);
                                 await Provider.of<DatabaseRepository>(context,
                                         listen: false)

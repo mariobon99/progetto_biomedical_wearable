@@ -154,7 +154,8 @@ class PlacePageState extends State<PlacePage> {
                       ? AlertDialog(
                           title: const Text('Start activity?'),
                           content:
-                              Text('You selected ${place.name}. Continue?'),
+                              Text('${place.name} ${place.description}  Continue?'),
+ 
                           actions: [
                             TextButton(
                                 onPressed: () async {
