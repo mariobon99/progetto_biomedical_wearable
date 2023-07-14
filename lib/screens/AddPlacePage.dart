@@ -28,6 +28,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Palette.bgColor,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -192,6 +193,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
             });
             await Provider.of<DatabaseRepository>(context, listen: false)
                 .insertPlace(newPlace);
+            CustomSnackBar(
+                context: context, message: 'New place added correctly');
           },
           icon: Icon(Icons.add_location_rounded),
         ),
