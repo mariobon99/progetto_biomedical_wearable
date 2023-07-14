@@ -7,6 +7,7 @@ import 'package:progetto_wearable/repositories/databaseRepository.dart';
 import 'package:provider/provider.dart';
 import '../database/entities/entities.dart';
 import '../utils/utils.dart';
+import '../widgets/customSnackBar.dart';
 
 // class AdvisePage extends StatefulWidget {
 //   const AdvisePage({super.key});
@@ -236,7 +237,106 @@ class _AddPlacePageState extends State<AddPlacePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<DatabaseRepository>(
+      body:  SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Palette.mainColor),
+                  color: Palette.mainColorShade),
+            child: Column(
+               mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const SizedBox(height: 10,),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Here you can insert your favorite spots of Padua and write a brief description to share with the community', style: TextStyle(fontWeight: FontWeight.bold),),
+                  ),
+                  const SizedBox(height: 20,),
+                  const SizedBox(
+                    width: 350,
+                    child: Image(
+                        fit: BoxFit.contain,
+                        isAntiAlias: false,
+                        filterQuality: FilterQuality.high,
+                        image: AssetImage('assets/images/scorcio.jpg')),
+                  ),
+                  //const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    child: TextFormField(
+                      controller: nameController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your new email or cancel';
+                                }
+                                return null;
+                              },
+                              enabled: true,
+                              decoration: const InputDecoration(
+                                  helperText: 'Enter the place name'),
+                              autofocus: true
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    child: TextFormField(
+                      controller: descriptionController,
+                              enabled: true,
+                              decoration: const InputDecoration(
+                                  helperText:
+                                      'Write a brief description of the place'),
+                              autofocus: true
+                    ),
+                  ),
+                  const SizedBox(height: 20,),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            var source = ImageSource.camera;
+                  
+                             XFile image = await ImagePicker().pickImage(
+                                source: source,
+                                imageQuality: 50,
+                                preferredCameraDevice:
+                                    CameraDevice.front) as XFile;
+                  
+                                setState(() {
+                                  setState(() {
+                                    _image = File(image.path);
+                                  });
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(5.0),
+                                decoration: const BoxDecoration(
+                                  color: Palette.mainColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.camera_alt,
+                                  color: Palette.white,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            Text('Add a photo of the place'),
+                          ],
+                        ),
+                  ),
+                  const SizedBox(height: 30,),
+                ],
+            ),
+          ),
+        ),
+      ),
+      /*Consumer<DatabaseRepository>(
         builder: (context, dbr, child) {
           return FutureBuilder(
               future: dbr.findUsermadePlaces(),
@@ -279,10 +379,32 @@ class _AddPlacePageState extends State<AddPlacePage> {
                 }
               });
         },
-      ),
+      )*/
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
+       splashColor: Colors.deepOrange,
+        onPressed: () async {
+            final position =await Geolocator.getCurrentPosition();
+              final latitude = position.latitude;
+              final longitude = position.longitude;
+                Place newPlace = Place(
+                                null,
+                                nameController.text,
+                                latitude,
+                                longitude,
+                                imageLink,
+                                descriptionController.text,
+                                true);
+                clearText();
+                await Provider.of<DatabaseRepository>(context,
+                        listen: false)
+                    .insertPlace(newPlace);
+            if(nameController.text=="" || nameController.text==""){
+                CustomSnackBar(context: context, message: 'Fill all fields');
+            }//if
+                            
+            },
+          /*showDialog(
               context: context,
               builder: (context) => AlertDialog(
                     title: Text('Insert your new place name and description'),
@@ -379,7 +501,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
                           child: Text('Cancel')),
                     ],
                   ));
-        },
+                  */
+
         child: Icon(Icons.add_location_rounded),
       ),
     );
