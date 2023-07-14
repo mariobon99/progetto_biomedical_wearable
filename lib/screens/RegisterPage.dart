@@ -18,6 +18,8 @@ class RegisterPage extends StatelessWidget {
   final passwordController = TextEditingController();
   final passwordController2 = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
   void clearText() {
     usernameController.clear();
     passwordController.clear();
@@ -40,152 +42,194 @@ class RegisterPage extends StatelessWidget {
                     color: Palette.mainColorShade,
                     border: Border.all(color: Palette.mainColor),
                     borderRadius: BorderRadius.all(Radius.circular(5))),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      'Please fill all the fields:',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(50, 20, 50, 0),
-                      child: TextFormField(
-                        controller: usernameController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(90.0),
-                          ),
-                          labelText: 'Username',
-                          icon: const Icon(Icons.person),
-                        ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 20,
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(50, 20, 50, 0),
-                      child: TextFormField(
-                        controller: mailController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(90.0),
-                          ),
-                          labelText: 'E-mail',
-                          icon: const Icon(Icons.mail),
-                        ),
+                      Text(
+                        'Please fill all the fields:',
+                        style: TextStyle(fontSize: 18),
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(50, 20, 50, 0),
-                      child: TextFormField(
-                        controller: passwordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(90.0),
-                          ),
-                          labelText: 'Password',
-                          icon: const Icon(Icons.lock),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(50, 20, 50, 0),
-                      child: TextFormField(
-                        controller: passwordController2,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(90.0),
-                          ),
-                          labelText: 'Confirm Password',
-                          icon: const Icon(Icons.lock),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 150,
-                      height: 50,
-                      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                      child: ElevatedButton(
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.app_registration_outlined,
-                              size: 15,
-                              //color: Colors.white,
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(50, 20, 50, 0),
+                        child: TextFormField(
+                           validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your username ';
+                              }
+                              return null;
+                            },
+                          controller: usernameController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(90.0),
                             ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            const Text(
-                              'Register',
-                            )
-                          ],
+                            labelText: 'Username',
+                            icon: const Icon(Icons.person),
+                          ),
                         ),
-                        onPressed: () async {
-                          if (usernameController.text != '' &&
-                              mailController.text != '' &&
-                              passwordController.text != '' &&
-                              passwordController.text != '' &&
-                              passwordController.text ==
-                                  passwordController2.text) {
-                            final sp = await SharedPreferences.getInstance();
-                            await sp.setString(
-                                'username', usernameController.text.trim());
-                            await sp.setString(
-                                'password', passwordController.text.trim());
-                            await sp.setString(
-                                'email', mailController.text.trim());
-                            // inserting new user
-                            User user = User(
-                                0,
-                                usernameController.text,
-                                mailController.text,
-                                1,
-                                0);
-
-                            Provider.of<DatabaseRepository>(context,
-                                    listen: false)
-                                .insertUser(user);
-
-                            // inserting the list of visitable places into the db
-                            List allplaces = Locations().allplaces;
-                            for (int i = 0; i < allplaces.length; i++) {
-                              Place place = Place(
-                                  i,
-                                  allplaces[i]['name'],
-                                  allplaces[i]['latitudine'],
-                                  allplaces[i]['longitudine'],
-                                  allplaces[i]['image'],
-                                  'Ciao',
-                                  false);
-                              await Provider.of<DatabaseRepository>(context,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(50, 20, 50, 0),
+                        child: TextFormField(
+                          validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your email ';
+                              }
+                              return null;
+                            },
+                          controller: mailController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(90.0),
+                            ),
+                            labelText: 'E-mail',
+                            icon: const Icon(Icons.mail),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(50, 20, 50, 0),
+                        child: TextFormField(
+                           validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your password';
+                                }
+                                else{
+                                  String error = "";
+                                  if (value.length < 8) {
+                                    error = 'Please enter at least 8 characters\n';
+                                  } 
+                                  if (!(value.contains(RegExp(r'[a-z]')))) {
+                                    error += "Please enter at least one lowercase letter\n";
+                                  }
+                                  if (!(value.contains(RegExp(r'[A-Z]')))) {
+                                    error += "Please enter at least one uppercase letter\n";
+                                  }
+                                  if (!(value.contains(RegExp(r'[0-9]')))) {
+                                    error += "Please enter at least one number\n";
+                                  }
+                                  if (!(value.contains(RegExp(r'[!@#%^$&*()?:{}|<>]')))) {
+                                    error += "Please enter at least:\n !, @, #, %, ^, \$, &, *, (, ), ?, :, {, }, |, <, >";
+                                  }
+                                  if(error.isNotEmpty){
+                                    return error.toString();    
+                                  }
+                                  else{
+                                    return null;
+                                  }
+                                }
+                          },
+                          controller: passwordController,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(90.0),
+                            ),
+                            labelText: 'Password',
+                            icon: const Icon(Icons.lock),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(50, 20, 50, 0),
+                        child: TextFormField(
+                          validator:  (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your password ';
+                              } else if (passwordController.text!=passwordController2.text){
+                                return 'The the two passwords don\'t match';
+                              }
+                              return null;
+                            },
+                          controller: passwordController2,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(90.0),
+                            ),
+                            labelText: 'Confirm Password',
+                            icon: const Icon(Icons.lock),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 150,
+                        height: 50,
+                        padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                        child: ElevatedButton(
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.app_registration_outlined,
+                                size: 15,
+                                //color: Colors.white,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                'Register',
+                              )
+                            ],
+                          ),
+                          onPressed: () async {
+                            
+                            if (_formKey.currentState!.validate()) {
+                              //salvo username, password email nelle shared preferences
+                              final sp = await SharedPreferences.getInstance();
+                              await sp.setString(
+                                  'username', usernameController.text.trim());
+                              await sp.setString(
+                                  'password', passwordController.text.trim());
+                              await sp.setString(
+                                  'email', mailController.text.trim());
+                              // inserting new user
+                              User user = User(
+                                  0,
+                                  usernameController.text,
+                                  mailController.text,
+                                  1,
+                                  0);
+                
+                              Provider.of<DatabaseRepository>(context,
                                       listen: false)
-                                  .insertPlace(place);
+                                  .insertUser(user);
+                
+                              // inserting the list of visitable places into the db
+                              List allplaces = Locations().allplaces;
+                              for (int i = 0; i < allplaces.length; i++) {
+                                Place place = Place(
+                                    i,
+                                    allplaces[i]['name'],
+                                    allplaces[i]['latitudine'],
+                                    allplaces[i]['longitudine'],
+                                    allplaces[i]['image'],
+                                    'Ciao',
+                                    false);
+                                await Provider.of<DatabaseRepository>(context,
+                                        listen: false)
+                                    .insertPlace(place);
+                              }
+                
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginPage()));
+                            
                             }
-
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginPage()));
-                          } else if (passwordController.text !=
-                              passwordController2.text) {
-                            CustomSnackBar(
-                                context: context,
-                                message: 'The two passwords are different');
-                          } else {
-                            CustomSnackBar(
-                                context: context, message: 'Fill all fields');
-                          }
-                        },
+                          },
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    )
-                  ],
+                      const SizedBox(
+                        height: 20,
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

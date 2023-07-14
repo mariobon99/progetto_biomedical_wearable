@@ -61,7 +61,7 @@ class LoginImpactPage extends StatelessWidget {
                           fit: BoxFit.contain,
                           isAntiAlias: false,
                           filterQuality: FilterQuality.high,
-                          image: AssetImage('assets/images/ImpactLogo.png')),
+                          image: AssetImage('assets/images/impact.png')),
                     ),
                     const SizedBox(
                       height: 20,
