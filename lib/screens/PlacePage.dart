@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:progetto_wearable/repositories/databaseRepository.dart';
-import 'package:progetto_wearable/utils/palette.dart';
+import 'package:progetto_wearable/utils/utils.dart';
 import 'dart:async';
 import 'dart:io';
-import 'package:progetto_wearable/utils/placeToVisit.dart';
-import 'package:progetto_wearable/widgets/customSnackBar.dart';
+import 'package:progetto_wearable/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../database/entities/entities.dart';
-import '../models/activity.dart';
 import '../services/impactService.dart';
 
 class PlacePage extends StatefulWidget {
@@ -27,7 +25,9 @@ class PlacePageState extends State<PlacePage> {
   Locations location = Locations();
   List<Place> places = [];
   List distances = [];
-  double? meanDistance = 100;
+
+  // default radius if the user doesn't allow IMPACT data to be used
+  double? meanDistance = 3;
 
   @override
   void initState() {
@@ -41,17 +41,19 @@ class PlacePageState extends State<PlacePage> {
     widget.onPageChange!(0);
   }
 
-  // Determine the current position of the device
+  // Determine the GPS permission
   Future<LocationPermission?> _determinePermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
 
     return permission;
   }
 
+  // opens the app settings for enable GPS
   Future<void> _openGPSSettings() async {
     await Geolocator.openAppSettings();
   }
 
+  // determines the actual position
   Future<void> _determinePosition() async {
     Position position = await Geolocator.getCurrentPosition();
     setState(() {
@@ -59,10 +61,10 @@ class PlacePageState extends State<PlacePage> {
     });
   }
 
+  // computes the distance of all the places
   void _getTheDistance() async {
     await _determinePosition();
     var listPlaces =
-        // ignore: use_build_context_synchronously
         await Provider.of<DatabaseRepository>(context, listen: false)
             .findAllPlaces();
     setState(() {
@@ -88,6 +90,7 @@ class PlacePageState extends State<PlacePage> {
     }
   }
 
+  // gets the FITBIT data calling the IMPACT server and computes the radius of visitable places
   Future<void> _getMeanDistance() async {
     final tokenManager = TokenManager();
     final sp = await SharedPreferences.getInstance();
@@ -106,6 +109,7 @@ class PlacePageState extends State<PlacePage> {
     });
   }
 
+  // algorithm to compute from the IMPACT data the mean distance of the activities
   double computeMean(List<Activity>? result) {
     double somma = 0;
     double totalValidActivities = 0;
@@ -118,6 +122,7 @@ class PlacePageState extends State<PlacePage> {
     return somma / totalValidActivities;
   }
 
+  // creates the tile with the place infos
   Widget _placeTile(Place place, double distance) {
     bool condition = distance < (meanDistance!);
     return Padding(
@@ -130,15 +135,19 @@ class PlacePageState extends State<PlacePage> {
             CustomSnackBar(
                 context: context, message: 'Activity already in progress.');
           } else {
+            // dialog to start activity
+            // ignore: use_build_context_synchronously
             showDialog(
                 context: context,
                 builder: (context) {
                   return condition
                       ? AlertDialog(
-                          title: const Text('Start activity?'),
-                          content:
-                              Text('${place.name} ${place.description}  Continue?'),
- 
+                          title: FittedBox(
+                              child: Text('Start activity: ${place.name} ?')),
+                          content: place.userMade
+                              ? Text('${place.description}\nContinue?')
+                              : Text(
+                                  '${place.name} ${place.description}  Continue?'),
                           actions: [
                             TextButton(
                                 onPressed: () async {
@@ -185,7 +194,7 @@ class PlacePageState extends State<PlacePage> {
           height: 100,
           child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 5,
               ),
               CircleAvatar(
@@ -206,7 +215,7 @@ class PlacePageState extends State<PlacePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     FittedBox(
@@ -215,7 +224,7 @@ class PlacePageState extends State<PlacePage> {
                         padding: const EdgeInsets.all(2.0),
                         child: Text(
                           place.name!,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Palette.white,
@@ -224,15 +233,11 @@ class PlacePageState extends State<PlacePage> {
                       ),
                     ),
                     Row(
-                      //mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.location_on),
-                        //if (locations.allplaces[index]['distance'] < 1000)
-                        //devo sistemare bene tra metri e chilometri
-
+                        const Icon(Icons.location_on),
                         Text(
                           "${distance.toStringAsFixed(2)} KM Away",
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
                             color: Palette.black,
@@ -263,7 +268,7 @@ class PlacePageState extends State<PlacePage> {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'In order to our app to run,\n enable the GPS permission in your local app settings',
                         style: TextStyle(fontSize: 15),
                         textAlign: TextAlign.center,
@@ -273,7 +278,7 @@ class PlacePageState extends State<PlacePage> {
                             _openGPSSettings();
                             _changePage();
                           },
-                          child: Text('Enable GPS'))
+                          child: const Text('Enable GPS'))
                     ]),
               );
             } else {
@@ -287,7 +292,7 @@ class PlacePageState extends State<PlacePage> {
               );
             }
           } else {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }

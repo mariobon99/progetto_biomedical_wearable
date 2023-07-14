@@ -1,4 +1,4 @@
-export 'AdvicePage.dart';
+export 'AddPlacePage.dart';
 export 'ComunityPage.dart';
 export 'HomePage.dart';
 export 'LoginImpactPage.dart';
@@ -8,3 +8,4 @@ export 'PlacePage.dart';
 export 'ProfilePage.dart';
 export 'RegisterPage.dart';
 export 'InfoPage.dart';
+export 'AchievmentsPage.dart';

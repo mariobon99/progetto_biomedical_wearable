@@ -1,17 +1,11 @@
-import 'dart:async';
-import 'dart:ffi';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:progetto_wearable/database/entities/entities.dart';
 import 'package:progetto_wearable/repositories/databaseRepository.dart';
-import 'package:progetto_wearable/utils/functionUtils.dart';
-import 'package:progetto_wearable/utils/palette.dart';
-import 'package:progetto_wearable/widgets/CustomCircularIndicator.dart';
-import 'package:progetto_wearable/widgets/CustomDialogueNewLevelUnlocked.dart';
-import 'package:progetto_wearable/widgets/customSnackBar.dart';
+import 'package:progetto_wearable/utils/utils.dart';
+import 'package:progetto_wearable/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,6 +48,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  // function passed to the Geolocator stream to update the distance to the target place
   void _updateDistance(Position currentPosition) {
     final double distance = Geolocator.distanceBetween(
       currentPosition.latitude,
@@ -67,6 +62,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // computes the selected place coordinates
   void _getSelectedPlaceCoordinates() async {
     final sp = await SharedPreferences.getInstance();
     String? selectedPlace = sp.getString('selected place');
@@ -89,6 +85,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // obtain the selected place from the saved Shared Preferences values
   void _setPlaceFromSP() async {
     final sp = await SharedPreferences.getInstance();
     String? placeName = sp.getString('selected place');
@@ -98,6 +95,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // removes selected place and ends activity, updating the DB
   void _endActivity() async {
     final sp = await SharedPreferences.getInstance();
     int placeId = sp.getInt('selected place id')!;
@@ -121,6 +119,7 @@ class _HomePageState extends State<HomePage> {
     _levelUpgrade();
   }
 
+  // checking if the user passed level
   Future<void> _levelUpgrade() async {
     final user = await Provider.of<DatabaseRepository>(context, listen: false)
         .findUserById(0);
@@ -135,12 +134,13 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+  // creating the points for the graphic
   Future<List<FlSpot>?> getVisitedPlaceByUser() async {
     // SISTEMARE
     final places = await Provider.of<DatabaseRepository>(context, listen: false)
         .findAllPlacesByAUser(0);
     List<FlSpot>? spotlist = [const FlSpot(-1, 0)];
-    final CO2ConversionRate = 0.192;
+    const CO2ConversionRate = 0.192;
     for (var i = places!.length > 10 ? places.length - 10 : 0;
         i < places.length;
         i++) {
@@ -157,6 +157,7 @@ class _HomePageState extends State<HomePage> {
     return spotlist;
   }
 
+  // function to retrieve user stats from DB
   Future<List<double>> getUserStatistics() async {
     final user = await Provider.of<DatabaseRepository>(context, listen: false)
         .findUserById(0);
@@ -180,7 +181,7 @@ class _HomePageState extends State<HomePage> {
       default:
         targetDistance = 10;
     }
-    statistics[0] = (user.distance / targetDistance * 100);
+    statistics[0] = (user.distance / targetDistance * 100) % 100;
     statistics[1] = visitedPlaceNum?.toDouble() ?? 0;
     statistics[2] = user.distance;
     return statistics;
@@ -193,6 +194,7 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(15.0),
         child: Column(
           children: [
+            // first box with activity
             GestureDetector(
                 onDoubleTap: _endActivity,
                 onLongPress: () {
@@ -200,8 +202,8 @@ class _HomePageState extends State<HomePage> {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: Text('Stop activity?'),
-                        content: Text(
+                        title: const Text('Stop activity?'),
+                        content: const Text(
                             'The current activity will be stopped before completion. No points will be gained. Continue?'),
                         actions: [
                           TextButton(
@@ -225,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                   }
                 },
                 child: Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   alignment: Alignment.center,
                   height: 200,
                   decoration: BoxDecoration(
@@ -236,42 +238,43 @@ class _HomePageState extends State<HomePage> {
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CircularProgressIndicator(
+                            const CircularProgressIndicator(
                               color: Palette.mainColor,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                             FittedBox(
                               child: Text('$_placeName in progress',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 30,
                                     color: Palette.black,
                                     fontWeight: FontWeight.bold,
                                   )),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 15,
                             ),
                             Text(
                               'Distance: ${_distanceInKM?.toStringAsFixed(2) ?? '-'} km',
-                              style: TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 20),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 15,
                             ),
-                            Text(
+                            const Text(
                               'Hold to stop',
                               style: TextStyle(
                                   color: Palette.mainColor, fontSize: 15),
                             ),
                           ],
                         )
-                      : Text(
+                      : const Text(
                           'No place selected, choose one',
                           style: TextStyle(fontSize: 20),
                         ),
                 )),
+            // second box with the graph of carbon footprint
             FutureBuilder(
                 future: getVisitedPlaceByUser(),
                 builder: (context, snapshot) {
@@ -280,7 +283,7 @@ class _HomePageState extends State<HomePage> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 30),
                       child: Container(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                             color: Palette.mainColorShade,
                             border: Border.all(color: Palette.mainColor),
@@ -309,20 +312,20 @@ class _HomePageState extends State<HomePage> {
                               bottomTitle: AxisTitle(
                                   titleText: 'Last activities',
                                   showTitle: true,
-                                  textStyle: TextStyle(
+                                  textStyle: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold)),
                               leftTitle: AxisTitle(
                                   titleText:
                                       'Carbon footprint reduction [kgCO2]',
                                   showTitle: true,
-                                  textStyle: TextStyle(
+                                  textStyle: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold)),
                               topTitle: AxisTitle(
                                   titleText: 'Your Carbon Footprint reduction',
                                   showTitle: true,
-                                  textStyle: TextStyle(
+                                  textStyle: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold)),
                             ),
@@ -344,7 +347,7 @@ class _HomePageState extends State<HomePage> {
                             color: Palette.mainColorShade,
                             border: Border.all(color: Palette.mainColor),
                             borderRadius: BorderRadius.circular(10)),
-                        child: Center(
+                        child: const Center(
                           child: Text(
                             'You visited no places, \n start visiting and here will appear your\n carbon footprint reduction',
                             style: TextStyle(fontSize: 20),
@@ -355,13 +358,14 @@ class _HomePageState extends State<HomePage> {
                     );
                   }
                 }),
+            // third box with user stats
             FutureBuilder(
                 future: getUserStatistics(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final stats = snapshot.data as List<double>;
                     return Container(
-                      padding: EdgeInsets.all(5),
+                      padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
                           color: Palette.mainColorShade,
                           border: Border.all(color: Palette.mainColor),
@@ -369,12 +373,12 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
+                          const Text(
                             'Your statistics',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
@@ -389,13 +393,13 @@ class _HomePageState extends State<HomePage> {
                               Expanded(
                                 child: Column(
                                   children: [
-                                    Text('Total carbon saved'),
+                                    const Text('Total kgCO2 saved'),
                                     Container(
                                       height: 100,
                                       alignment: Alignment.center,
                                       child: Text(
                                         '${(stats[2] * 0.192).toStringAsFixed(2)}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 35,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -407,13 +411,13 @@ class _HomePageState extends State<HomePage> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Text('Total visited places'),
+                                    const Text('Total visited places'),
                                     Container(
                                       height: 100,
                                       alignment: Alignment.center,
                                       child: Text(
                                         '${stats[1].toInt()}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 35,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -427,7 +431,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     );
                   } else {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }

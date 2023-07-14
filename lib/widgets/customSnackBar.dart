@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:progetto_wearable/utils/palette.dart';
+import 'package:progetto_wearable/utils/utils.dart';
 
 ScaffoldMessengerState CustomSnackBar(
     {required BuildContext context, required String message}) {

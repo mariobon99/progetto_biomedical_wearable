@@ -346,6 +346,12 @@ class _$PlacesDao extends PlacesDao {
   }
 
   @override
+  Future<List<String>> getAllPlaceNames() async {
+    return _queryAdapter.queryList('SELECT name FROM Place',
+        mapper: (Map<String, Object?> row) => row.values.first as String);
+  }
+
+  @override
   Future<void> insertPlace(Place place) async {
     await _placeInsertionAdapter.insert(place, OnConflictStrategy.replace);
   }

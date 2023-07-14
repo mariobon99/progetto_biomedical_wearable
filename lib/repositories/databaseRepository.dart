@@ -48,13 +48,13 @@ class DatabaseRepository extends ChangeNotifier {
   }
 
   Future<void> updateUserUsername(int id, String newUsername) async {
-  await database.usersDao.updateUserUsername(id, newUsername);
-  notifyListeners();
+    await database.usersDao.updateUserUsername(id, newUsername);
+    notifyListeners();
   }
 
   Future<void> updateUserEmail(int id, String newEmail) async {
-  await database.usersDao.updateUserEmail(id, newEmail);
-  notifyListeners();
+    await database.usersDao.updateUserEmail(id, newEmail);
+    notifyListeners();
   }
 
   // Places queries
@@ -77,6 +77,10 @@ class DatabaseRepository extends ChangeNotifier {
   Future<List<Place>?> findUsermadePlaces() async {
     final listPlaces = database.placesDao.findUsermadePlaces();
     return listPlaces;
+  }
+
+  Future<List<String>> getAllPlaceNames() async {
+    return await database.placesDao.getAllPlaceNames();
   }
 
   // VisitedPlace queries

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:progetto_wearable/utils/utils.dart';
-import 'package:progetto_wearable/widgets/customSnackBar.dart';
-import 'package:progetto_wearable/widgets/loginImageButton.dart';
+import 'package:progetto_wearable/widgets/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:progetto_wearable/services/impactService.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -27,7 +26,10 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
         backgroundColor: Palette.bgColor,
         appBar: AppBar(
-          title: Text(LoginPage.routename, style: TextStyle(fontSize: 30)),
+          title: Text(LoginPage.routename,
+              style: TextStyle(
+                fontSize: 40,
+              )),
           centerTitle: true,
         ),
         body: SingleChildScrollView(
@@ -95,11 +97,7 @@ class LoginPage extends StatelessWidget {
                       final sp = await SharedPreferences.getInstance();
                       final username = sp.getString('username');
                       final password = sp.getString('password');
-
-                      //prendo il refresh dalle shared preferences, se non c'è allora mi ritorna null
                       final refresh = sp.getString('refresh');
-                      //final access= sp.getString('access'); Usato per Debug: usato per vedere se dopo 5 min quando access scatudo mi rimanda al login impact
-
                       if (username == null || password == null) {
                         CustomSnackBar(context: context, message: 'Register');
                       } else {
@@ -108,21 +106,17 @@ class LoginPage extends StatelessWidget {
                           clearText();
                           checkGPSPermission();
                           if (refresh == null) {
-                            //primo accesso dell'utente,  non ho ancora nulla nelle shared preferences
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => LoginImpactPage()));
                           } else {
-                            //refresh salvato, controllo se valido
                             if (JwtDecoder.isExpired(refresh)) {
-                              //se refresh scaduto lo rimando al login impact in cui poi viene generato nuono JWT
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => LoginImpactPage()));
                             } else {
-                              // refresh valido lo mando a home
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
@@ -163,7 +157,7 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: 80,
+                  height: 60,
                 ),
                 Text('Or register with:'),
                 SizedBox(
@@ -174,16 +168,19 @@ class LoginPage extends StatelessWidget {
                   children: [
                     AlternativeLoginButton(
                         assetImagePath: 'assets/images/google_logo.png'),
-                    AlternativeLoginButton(
-                        assetImagePath: 'assets/images/apple_logo.png'),
                   ],
                 ),
                 const SizedBox(
-                  height: 40,
+                  height: 60,
                 ),
-                Text('The custom icons used in this app are provided by flaticon.com', style: TextStyle(color: Palette.grey),),
+                Text(
+                  'The custom icons used in this app are provided by flaticon.com',
+                  style: TextStyle(color: Palette.grey),
+                ),
+                SizedBox(
+                  height: 1,
+                )
               ],
-            
             ),
           ),
         ));
@@ -191,40 +188,8 @@ class LoginPage extends StatelessWidget {
 }
 
 Future<void> checkGPSPermission() async {
-// Test if location services are enabled.
-  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) {
-    // Location services are not enabled don't continue
-    // accessing the position and request users of the
-    // App to enable the location services.
-    print('Location services are disabled.');
-    return;
-  }
-
   LocationPermission permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      // Permissions are denied, next time you could try
-      // requesting permissions again (this is also where
-      // Android's shouldShowRequestPermissionRationale
-      // returned true. According to Android guidelines
-      // your App should show an explanatory UI now.
-      print('Location permissions are denied');
-
-      return;
-    }
-  }
-
-  if (permission == LocationPermission.deniedForever) {
-    // Permissions are denied forever, handle appropriately.
-    print(
-        'Location permissions are permanently denied, we cannot request permissions.');
-
-    /// open app settings so that user changes permissions
-    // await Geolocator.openAppSettings();
-    // await Geolocator.openLocationSettings();
-
-    return;
   }
 }

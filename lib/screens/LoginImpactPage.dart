@@ -3,9 +3,7 @@ import 'screens.dart';
 import 'package:progetto_wearable/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:progetto_wearable/services/impactService.dart';
-import '../widgets/customSnackBar.dart';
-
-//import 'package:flutter_login/theme.dart';
+import '../widgets/widgets.dart';
 
 class LoginImpactPage extends StatelessWidget {
   LoginImpactPage({Key? key}) : super(key: key);
@@ -16,8 +14,7 @@ class LoginImpactPage extends StatelessWidget {
 
   Future<void> saveUsernameImpact(String usernameImpact) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('usernameImpact',
-        usernameImpact); //save string ('username'=key, username= value)
+    await prefs.setString('usernameImpact', usernameImpact);
   }
 
   Future<void> savePasswordImpact(String passwordImpact) async {
@@ -104,16 +101,16 @@ class LoginImpactPage extends StatelessWidget {
                     const SizedBox(
                       height: 10,
                     ),
-                    Container(
-                      width: 110,
+                    SizedBox(
+                      width: 150,
                       child: ElevatedButton(
                         child: Center(
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: const [
                               Icon(
                                 Icons.app_registration_outlined,
                                 size: 15,
-                                //color: Colors.white,
                               ),
                               SizedBox(
                                 width: 5,
@@ -130,10 +127,12 @@ class LoginImpactPage extends StatelessWidget {
                           String passwordImpact =
                               passwordController.text.trim();
                           if (usernameImpact != '' && passwordImpact != '') {
-                            if (usernameImpact == Impact.username &&
-                                passwordImpact == Impact.password) {
+                            final int result =
+                                await tokenManager.getAndStoreTokens(
+                                    usernameImpact, passwordImpact);
+                            if (result == 200) {
                               clearText();
-                              tokenManager.getAndStoreTokens();
+
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
@@ -153,8 +152,35 @@ class LoginImpactPage extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: 20,
+                      width: 150,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: ((context) => MainPage())));
+                          },
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(
+                                  Icons.app_registration_outlined,
+                                  size: 15,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  'Do not authorize',
+                                )
+                              ],
+                            ),
+                          )),
                     ),
+                    SizedBox(
+                      height: 20,
+                    )
                   ],
                 ),
               ),

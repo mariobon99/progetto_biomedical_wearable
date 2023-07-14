@@ -25,4 +25,7 @@ abstract class PlacesDao {
 
   @Query('SELECT * FROM Place WHERE userMade = true')
   Future<List<Place>?> findUsermadePlaces();
+
+  @Query('SELECT name FROM Place')
+  Future<List<String>> getAllPlaceNames();
 }
