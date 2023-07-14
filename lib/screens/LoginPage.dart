@@ -188,8 +188,13 @@ class LoginPage extends StatelessWidget {
                     AlternativeLoginButton(
                         assetImagePath: 'assets/images/apple_logo.png'),
                   ],
-                )
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                Text('The custom icons used in this app are provided by flaticon.com', style: TextStyle(color: Palette.grey),),
               ],
+            
             ),
           ),
         ));

@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:progetto_wearable/database/entities/entities.dart';
 import 'package:progetto_wearable/screens/AchievmentsPage.dart';
-import 'package:progetto_wearable/screens/EditProfilePage.dart';
 import 'package:progetto_wearable/utils/palette.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:progetto_wearable/widgets/DialogueEditProfile.dart';
@@ -68,10 +68,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   actions: <Widget>[
                       IconButton(
                         onPressed: (){
-                          openDialog(context).then((value) {
+                          openDialog(context).then((value) async {
                               // Aggiorna i dati quando si torna da Edit Profile
                               loadSavedValues();
-                            });
+                              //Debug, verifica che i valori siano stati aggiornati nel database
+                              //User? user = await Provider.of<DatabaseRepository>(context,
+                              //listen: false)
+                              //.findUserById(0);
+                              //print(user?.username);
+                              //print(user?.email);
+                            }
+                            );
                         },
                         icon: const Icon(Icons.edit))
                   ],
@@ -200,14 +207,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         const SizedBox(
                           height: 20,
                         ),
-                        ElevatedButton(onPressed: (){
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context){
-                              return CustomAlertNewLevel();
-                            }
-                          );
-                        }, child: Text('prova pop-up nuovo livello sbloccato '))
                       ],
                     ),
                   ),
