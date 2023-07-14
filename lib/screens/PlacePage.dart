@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:progetto_wearable/repositories/databaseRepository.dart';
 import 'package:progetto_wearable/utils/palette.dart';
 import 'dart:async';
+import 'dart:io';
 import 'package:progetto_wearable/utils/placeToVisit.dart';
 import 'package:progetto_wearable/widgets/customSnackBar.dart';
 import 'package:provider/provider.dart';
@@ -27,10 +28,6 @@ class PlacePageState extends State<PlacePage> {
   List<Place> places = [];
   List distances = [];
   double? meanDistance = 100;
-  TextEditingController nameController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  final imageLink =
-      'https://static.vecteezy.com/ti/vettori-gratis/p3/5065038-mappa-e-icona-segnaletica-direzione-di-viaggio-luogo-sulla-mappa-segnato-con-simbolo-puntatore-mappa-piatta-destinazione-e-icona-segnaletica-illustratore-modificabile-a-colori-gratuito-vettoriale.jpg';
 
   @override
   void initState() {
@@ -44,18 +41,8 @@ class PlacePageState extends State<PlacePage> {
     widget.onPageChange!(0);
   }
 
-  /// Determine the current position of the device
+  // Determine the current position of the device
   Future<LocationPermission?> _determinePermission() async {
-    // Test if location services are enabled.
-    // bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    // if (!serviceEnabled) {
-    //   // Location services are not enabled don't continue
-    //   // accessing the position and request users of the
-    //   // App to enable the location services.
-    //   print('Location services are disabled.');
-    //   return null;
-    // }
-
     LocationPermission permission = await Geolocator.checkPermission();
 
     return permission;
@@ -63,14 +50,10 @@ class PlacePageState extends State<PlacePage> {
 
   Future<void> _openGPSSettings() async {
     await Geolocator.openAppSettings();
-    await Geolocator.openLocationSettings();
   }
 
   Future<void> _determinePosition() async {
-// When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
     Position position = await Geolocator.getCurrentPosition();
-    //print("Current Position $position");
     setState(() {
       _currentUserPosition = position;
     });
@@ -193,38 +176,31 @@ class PlacePageState extends State<PlacePage> {
           decoration: BoxDecoration(
               gradient: LinearGradient(
                   colors: condition
-                      ? [Palette.mainColor, Palette.mainColorShade]
+                      ? [Palette.tertiaryColor, Palette.mainColorShade]
                       : [Palette.darkGrey, Palette.grey]),
-              borderRadius: BorderRadius.circular(5)),
+              borderRadius: BorderRadius.circular(5),
+              border: place.userMade
+                  ? Border.all(color: Colors.orange, width: 2)
+                  : null),
           height: 100,
           child: Row(
             children: [
               SizedBox(
                 width: 5,
               ),
-              Container(
-                height: 92,
-                width: 100,
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(10)),
-                child: Image.network(
-                  place.imageLink,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) {
-                      return child;
-                    } else {
-                      return Center(
-                        child: Container(
-                            padding: EdgeInsets.all(20),
-                            height: 70,
-                            width: 70,
-                            color: Palette.white,
-                            child: CircularProgressIndicator()),
-                      );
-                    }
-                  },
-                ),
+              CircleAvatar(
+                radius: 44,
+                backgroundColor: Palette.white,
+                backgroundImage: const AssetImage('assets/images/logo.png'),
+                foregroundImage: place.imageLink.contains('http')
+                    ? Image.network(
+                        place.imageLink,
+                        fit: BoxFit.cover,
+                      ).image
+                    : Image.file(
+                        File(place.imageLink),
+                        fit: BoxFit.cover,
+                      ).image,
               ),
               Flexible(
                 child: Column(
@@ -293,8 +269,9 @@ class PlacePageState extends State<PlacePage> {
                         textAlign: TextAlign.center,
                       ),
                       ElevatedButton(
-                          onPressed: () async {
+                          onPressed: () {
                             _openGPSSettings();
+                            _changePage();
                           },
                           child: Text('Enable GPS'))
                     ]),

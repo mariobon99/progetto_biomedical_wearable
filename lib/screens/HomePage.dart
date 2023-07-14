@@ -64,10 +64,6 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _distanceInKM = distance / 1000;
-      // if (_distanceInKM! < 0.002) {
-      //   showPlace = false;
-      //   _completed = true;
-      // }
     });
   }
 
@@ -136,6 +132,7 @@ class _HomePageState extends State<HomePage> {
       await Provider.of<DatabaseRepository>(context, listen: false)
           .updateUserLevel(0, newLevel);
     }
+    setState(() {});
   }
 
   Future<List<FlSpot>?> getVisitedPlaceByUser() async {
@@ -193,7 +190,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(15.0),
         child: Column(
           children: [
             GestureDetector(
@@ -231,7 +228,6 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.all(10),
                   alignment: Alignment.center,
                   height: 200,
-                  width: 350,
                   decoration: BoxDecoration(
                       color: Palette.mainColorShade,
                       border: Border.all(color: Palette.mainColor),
@@ -282,7 +278,7 @@ class _HomePageState extends State<HomePage> {
                   if (snapshot.hasData) {
                     final graph_dots = snapshot.data as List<FlSpot>;
                     return Padding(
-                      padding: const EdgeInsets.all(30.0),
+                      padding: const EdgeInsets.symmetric(vertical: 30),
                       child: Container(
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
@@ -341,7 +337,7 @@ class _HomePageState extends State<HomePage> {
                     );
                   } else {
                     return Padding(
-                      padding: const EdgeInsets.all(13.0),
+                      padding: const EdgeInsets.symmetric(vertical: 30),
                       child: Container(
                         height: 100,
                         decoration: BoxDecoration(
@@ -365,6 +361,7 @@ class _HomePageState extends State<HomePage> {
                   if (snapshot.hasData) {
                     final stats = snapshot.data as List<double>;
                     return Container(
+                      padding: EdgeInsets.all(5),
                       decoration: BoxDecoration(
                           color: Palette.mainColorShade,
                           border: Border.all(color: Palette.mainColor),

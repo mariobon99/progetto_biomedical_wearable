@@ -136,11 +136,15 @@ class CommunityPage extends StatelessWidget {
                                         tileColor: user.id == 0
                                             ? Palette.tertiaryColor
                                             : Palette.mainColorShade,
-                                        title: Text(
-                                          '${userIndex + 1}. ${user.id == 0 ? 'You' : user.username}',
-                                          style: TextStyle(
-                                              fontSize: isOnPodium ? 23 : 22,
-                                              fontWeight: FontWeight.bold),
+                                        title: FittedBox(
+                                          alignment: Alignment.centerLeft,
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            '${userIndex + 1}. ${user.id == 0 ? 'You' : user.username}',
+                                            style: TextStyle(
+                                                fontSize: isOnPodium ? 23 : 22,
+                                                fontWeight: FontWeight.bold),
+                                          ),
                                         ),
                                         subtitle: Column(
                                           crossAxisAlignment:

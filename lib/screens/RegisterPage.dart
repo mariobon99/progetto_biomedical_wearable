@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:progetto_wearable/repositories/databaseRepository.dart';
 import 'package:progetto_wearable/screens/LoginPage.dart';
@@ -6,6 +8,7 @@ import 'package:progetto_wearable/widgets/customSnackBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:progetto_wearable/database/entities/entities.dart';
+import 'package:username_generator/username_generator.dart';
 
 import '../utils/placeToVisit.dart';
 
@@ -27,6 +30,22 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void addRandomUsersToDatabase(int n) {
+      for (var i = 1; i < n; i++) {
+        var username = UsernameGenerator().generateRandom();
+        var distance = (Random().nextDouble() * 200);
+        var level = distance < 100
+            ? distance < 10
+                ? 1
+                : 2
+            : 3;
+        User user = User(i, username, '1234', 'generico', level, distance);
+
+        Provider.of<DatabaseRepository>(context, listen: false)
+            .insertUser(user);
+      }
+    }
+
     return Scaffold(
         backgroundColor: Palette.bgColor,
         appBar: AppBar(
@@ -215,13 +234,17 @@ class RegisterPage extends StatelessWidget {
                                         listen: false)
                                     .insertPlace(place);
                               }
-                
+                              addRandomUsersToDatabase(30);
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => LoginPage()));
                             
                             }
+
+                            
+
+                       
                           },
                         ),
                       ),

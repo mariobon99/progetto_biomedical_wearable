@@ -14,13 +14,12 @@ class TokenManager {
     final url = Impact.baseUrl + Impact.pingEndpoint;
     print('Calling: $url');
     final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200){
+    if (response.statusCode == 200) {
       return true;
     } else {
-        return false;
+      return false;
     }
   }
-
 
   Future<int> getAndStoreTokens() async {
     //creo la richiesta
@@ -107,7 +106,6 @@ class TokenManager {
               .toString();
       final url = Impact.baseUrl +
           Impact.exerciseEndpoint +
-          '/' +
           Impact.patientUsername +
           '/daterange/start_date/$startday/end_date/$endday';
       final headers = {HttpHeaders.authorizationHeader: 'Bearer $access'};

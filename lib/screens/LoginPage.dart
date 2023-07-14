@@ -11,7 +11,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
 
-  static const routename = 'Padova Sostenibile';
+  static const routename = 'PaduaGo!';
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -27,18 +27,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
         backgroundColor: Palette.bgColor,
         appBar: AppBar(
-          title: Text(LoginPage.routename),
-          actions: [
-            IconButton(
-                onPressed: () async {
-                  final sp = await SharedPreferences.getInstance();
-                  await sp.remove('username');
-                  await sp.remove('password');
-                  await sp.remove('access');
-                  await sp.remove('refresh');
-                },
-                icon: Icon(Icons.miscellaneous_services))
-          ],
+          title: Text(LoginPage.routename, style: TextStyle(fontSize: 30)),
           centerTitle: true,
         ),
         body: SingleChildScrollView(
@@ -114,10 +103,10 @@ class LoginPage extends StatelessWidget {
                       if (username == null || password == null) {
                         CustomSnackBar(context: context, message: 'Register');
                       } else {
-                        checkGPSPermission();
                         if (usernameController.text.trim() == username &&
                             passwordController.text == password) {
                           clearText();
+                          checkGPSPermission();
                           if (refresh == null) {
                             //primo accesso dell'utente,  non ho ancora nulla nelle shared preferences
                             Navigator.pushReplacement(
