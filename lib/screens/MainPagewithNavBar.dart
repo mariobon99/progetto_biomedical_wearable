@@ -1,7 +1,6 @@
-import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:progetto_wearable/repositories/databaseRepository.dart';
-import 'package:progetto_wearable/widgets/customSnackBar.dart';
+import 'package:progetto_wearable/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens.dart';
@@ -32,7 +31,7 @@ class _MainPageState extends State<MainPage> {
 
   void checkImpactAuthorization() async {
     final sp = await SharedPreferences.getInstance();
-    bool auth = sp.getString('refresh') != '';
+    bool auth = sp.getString('refresh') != null;
     setState(() {
       _authorization = auth;
     });
@@ -66,7 +65,7 @@ class _MainPageState extends State<MainPage> {
                 ),
                 child: Row(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       width: 6,
                     ),
                     Consumer<DatabaseRepository>(
@@ -81,14 +80,14 @@ class _MainPageState extends State<MainPage> {
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               );
                             } else {
-                              return SizedBox(
+                              return const SizedBox(
                                   width: 20,
                                   child: CircularProgressIndicator());
                             }
                           });
                     }),
-                    Icon(LineIcons.userCircle),
-                    SizedBox(
+                    const Icon(LineIcons.userCircle),
+                    const SizedBox(
                       width: 6,
                     ),
                   ],
@@ -106,7 +105,7 @@ class _MainPageState extends State<MainPage> {
           });
         },
         children: [
-          HomePage(),
+          const HomePage(),
           PlacePage(
             onPageChange: (index) {
               setState(() {
@@ -184,8 +183,8 @@ class _MainPageState extends State<MainPage> {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: Text('Delete the account'),
-                          content: Text(
+                          title: const Text('Delete the account'),
+                          content: const Text(
                               'Are you sure? All the progresses will be lost. '),
                           actions: [
                             TextButton(
@@ -206,12 +205,12 @@ class _MainPageState extends State<MainPage> {
                                         builder: (context) => LoginPage(),
                                       ));
                                 },
-                                child: Text('Yes, delete')),
+                                child: const Text('Yes, delete')),
                             TextButton(
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: Text('No'))
+                                child: const Text('No'))
                           ],
                         ),
                       );

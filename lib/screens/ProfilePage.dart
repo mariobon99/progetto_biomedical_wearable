@@ -1,19 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:progetto_wearable/database/entities/entities.dart';
-import 'package:progetto_wearable/screens/AchievmentsPage.dart';
-import 'package:progetto_wearable/utils/palette.dart';
+import 'package:progetto_wearable/screens/screens.dart';
+import 'package:progetto_wearable/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:progetto_wearable/widgets/DialogueEditProfile.dart';
-import 'package:progetto_wearable/widgets/CustomDialogueLevel.dart';
-import 'package:progetto_wearable/utils/levels.dart';
+import 'package:progetto_wearable/widgets/widgets.dart';
 import 'package:progetto_wearable/repositories/databaseRepository.dart';
 import 'package:provider/provider.dart';
-
-import '../widgets/CustomDialogueNewLevelUnlocked.dart';
-
+import 'dart:io';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key? key}) : super(key: key);
@@ -66,23 +59,22 @@ class _ProfilePageState extends State<ProfilePage> {
                 appBar: AppBar(
                   title: const Text('$routename'),
                   actions: <Widget>[
-                      IconButton(
-                        onPressed: (){
+                    IconButton(
+                        onPressed: () {
                           openDialog(context).then((value) async {
-                              // Aggiorna i dati quando si torna da Edit Profile
-                              loadSavedValues();
-                              //Debug, verifica che i valori siano stati aggiornati nel database
-                              //User? user = await Provider.of<DatabaseRepository>(context,
-                              //listen: false)
-                              //.findUserById(0);
-                              //print(user?.username);
-                              //print(user?.email);
-                            }
-                            );
+                            // Aggiorna i dati quando si torna da Edit Profile
+                            loadSavedValues();
+                            //Debug, verifica che i valori siano stati aggiornati nel database
+                            //User? user = await Provider.of<DatabaseRepository>(context,
+                            //listen: false)
+                            //.findUserById(0);
+                            //print(user?.username);
+                            //print(user?.email);
+                          });
                         },
                         icon: const Icon(Icons.edit))
                   ],
-                  ),
+                ),
                 body: SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -104,17 +96,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                   children: <Widget>[
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          top: 70, bottom: 0, left: 10, right: 10),
+                                          top: 70,
+                                          bottom: 0,
+                                          left: 10,
+                                          right: 10),
                                       child: Column(
                                         children: <Widget>[
                                           const Text("Username",
-                                              style:
-                                                  TextStyle(fontWeight: FontWeight.bold)),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold)),
                                           Text("$username"),
                                           const SizedBox(height: 20),
                                           const Text("Email",
-                                              style:
-                                                  TextStyle(fontWeight: FontWeight.bold)),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold)),
                                           Text("$email"),
                                           const SizedBox(height: 20),
                                         ],
@@ -143,8 +138,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          onTap: (){
-                            if (Userlevel==1){
+                          onTap: () {
+                            if (Userlevel == 1) {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -155,32 +150,30 @@ class _ProfilePageState extends State<ProfilePage> {
                                   );
                                 },
                               );
-                            } 
-                            if (Userlevel==2){
-                              showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return CustomAlert(
-                                  title: Levels.title2,
-                                  imagePath: Levels.imagePath2,
-                                  description: Levels.description2,
-                                );
-                              },
-                            );
-
                             }
-                            if (Userlevel==3){
+                            if (Userlevel == 2) {
                               showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return CustomAlert(
-                                  title: Levels.title3,
-                                  imagePath: Levels.imagePath3,
-                                  description: Levels.description3,
-                                );
-                              },
-                            );
-
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CustomAlert(
+                                    title: Levels.title2,
+                                    imagePath: Levels.imagePath2,
+                                    description: Levels.description2,
+                                  );
+                                },
+                              );
+                            }
+                            if (Userlevel == 3) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CustomAlert(
+                                    title: Levels.title3,
+                                    imagePath: Levels.imagePath3,
+                                    description: Levels.description3,
+                                  );
+                                },
+                              );
                             }
                           },
                         ),
@@ -200,8 +193,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(fullscreenDialog: true, builder: (context)=> AchievmentsPage()));
-
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    fullscreenDialog: true,
+                                    builder: (context) => AchievmentsPage()));
                           },
                         ),
                         const SizedBox(
@@ -212,18 +208,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               );
-            }else {
-              return CircularProgressIndicator();
+            } else {
+              return const Center(child: CircularProgressIndicator());
             }
-          }
-      );
+          });
     });
   }
-
-
-
-  
-  
 
   Widget _imageProfile() {
     return Stack(children: <Widget>[

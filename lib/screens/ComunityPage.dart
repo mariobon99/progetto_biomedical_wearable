@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:progetto_wearable/repositories/databaseRepository.dart';
-import 'package:progetto_wearable/utils/palette.dart';
-import 'package:progetto_wearable/widgets/customSnackBar.dart';
+import 'package:progetto_wearable/utils/utils.dart';
+import 'package:progetto_wearable/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:progetto_wearable/database/entities/entities.dart';
 
@@ -109,7 +109,7 @@ class CommunityPage extends StatelessWidget {
                                                 builder: (context) {
                                                   return AlertDialog(
                                                     title: Text(
-                                                        'Add ${user.username} to your friends'),
+                                                        'Add ${user.username} to your friends?'),
                                                     actions: [
                                                       TextButton(
                                                           onPressed: () {

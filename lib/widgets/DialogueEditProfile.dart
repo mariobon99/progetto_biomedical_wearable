@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:progetto_wearable/utils/utils.dart';
+import 'widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:progetto_wearable/utils/palette.dart';
-
-
 import 'package:progetto_wearable/repositories/databaseRepository.dart';
 import 'package:provider/provider.dart';
 
@@ -15,8 +12,7 @@ final _formKey = GlobalKey<FormState>();
 
 Future<void> saveUsername(String username) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString(
-      'username', username); //save string ('username'=key, username= value)
+  await prefs.setString('username', username);
 }
 
 Future<void> savePassword(String password) async {
@@ -27,6 +23,12 @@ Future<void> savePassword(String password) async {
 Future<void> saveEmail(String email) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setString('email', email);
+}
+
+void clearText() {
+  usernameController.clear();
+  passwordController.clear();
+  emailController.clear();
 }
 
 Future openDialog(BuildContext context) => showDialog(
@@ -71,9 +73,7 @@ Future openDialog(BuildContext context) => showDialog(
                         Navigator.pop(context);
 
                         // Azzera i controller dei campi di testo
-                        usernameController.clear();
-                        passwordController.clear();
-                        emailController.clear();
+                        clearText();
                       },
                       child: const Text(
                         'CANCEL',
@@ -82,37 +82,33 @@ Future openDialog(BuildContext context) => showDialog(
                     ),
                     TextButton(
                       onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          //Aggiornare shared preferences
+                          await saveUsername(usernameController.text);
+                          await savePassword(passwordController.text);
+                          await saveEmail(emailController.text);
 
-                          if (_formKey.currentState!.validate()) {
-                            //Aggiornare shared preferences
-                            await saveUsername(usernameController.text);
-                            await savePassword(passwordController.text);
-                            await saveEmail(emailController.text);
-
-                            //Aggiornare i valori nel database
-                            await Provider.of<DatabaseRepository>(context, listen: false)
+                          //Aggiornare i valori nel database
+                          await Provider.of<DatabaseRepository>(context,
+                                  listen: false)
                               .updateUserUsername(0, usernameController.text);
-                            await Provider.of<DatabaseRepository>(context, listen: false)
+                          await Provider.of<DatabaseRepository>(context,
+                                  listen: false)
                               .updateUserEmail(0, emailController.text);
-                            // ignore: use_build_context_synchronously
-                            
-                            Navigator.pop(context);
+                          // ignore: use_build_context_synchronously
 
+                          Navigator.pop(context);
 
                           // Azzera i controller dei campi di testo
                           usernameController.clear();
                           passwordController.clear();
                           emailController.clear();
 
-
-                            // ignore: use_build_context_synchronously
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Your edits has been saved!'),
-                                backgroundColor: Palette.grey,
-                              ),
-                            );
-                          } //if
+                          // ignore: use_build_context_synchronously
+                          CustomSnackBar(
+                              context: context,
+                              message: 'Your edits have been saved!');
+                        } //if
                       },
                       child: const Text(
                         'SAVE',

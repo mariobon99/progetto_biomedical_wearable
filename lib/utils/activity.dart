@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Activity {
   String name;
   num duration;

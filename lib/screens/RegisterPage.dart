@@ -1,16 +1,12 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:progetto_wearable/repositories/databaseRepository.dart';
-import 'package:progetto_wearable/screens/LoginPage.dart';
-import 'package:progetto_wearable/utils/palette.dart';
-import 'package:progetto_wearable/widgets/customSnackBar.dart';
+import 'package:progetto_wearable/screens/screens.dart';
+import 'package:progetto_wearable/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:progetto_wearable/database/entities/entities.dart';
 import 'package:username_generator/username_generator.dart';
-
-import '../utils/placeToVisit.dart';
+import 'dart:math';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({Key? key}) : super(key: key);
@@ -39,7 +35,7 @@ class RegisterPage extends StatelessWidget {
                 ? 1
                 : 2
             : 3;
-        User user = User(i, username, '1234', 'generico', level, distance);
+        User user = User(i, username, 'generico', level, distance);
 
         Provider.of<DatabaseRepository>(context, listen: false)
             .insertUser(user);
@@ -76,12 +72,12 @@ class RegisterPage extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.fromLTRB(50, 20, 50, 0),
                         child: TextFormField(
-                           validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your username ';
-                              }
-                              return null;
-                            },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your username ';
+                            }
+                            return null;
+                          },
                           controller: usernameController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -96,11 +92,11 @@ class RegisterPage extends StatelessWidget {
                         padding: const EdgeInsets.fromLTRB(50, 20, 50, 0),
                         child: TextFormField(
                           validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email ';
-                              }
-                              return null;
-                            },
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email ';
+                            }
+                            return null;
+                          },
                           controller: mailController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -114,34 +110,36 @@ class RegisterPage extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.fromLTRB(50, 20, 50, 0),
                         child: TextFormField(
-                           validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your password';
-                                }
-                                else{
-                                  String error = "";
-                                  if (value.length < 8) {
-                                    error = 'Please enter at least 8 characters\n';
-                                  } 
-                                  if (!(value.contains(RegExp(r'[a-z]')))) {
-                                    error += "Please enter at least one lowercase letter\n";
-                                  }
-                                  if (!(value.contains(RegExp(r'[A-Z]')))) {
-                                    error += "Please enter at least one uppercase letter\n";
-                                  }
-                                  if (!(value.contains(RegExp(r'[0-9]')))) {
-                                    error += "Please enter at least one number\n";
-                                  }
-                                  if (!(value.contains(RegExp(r'[!@#%^$&*()?:{}|<>]')))) {
-                                    error += "Please enter at least:\n !, @, #, %, ^, \$, &, *, (, ), ?, :, {, }, |, <, >";
-                                  }
-                                  if(error.isNotEmpty){
-                                    return error.toString();    
-                                  }
-                                  else{
-                                    return null;
-                                  }
-                                }
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            } else {
+                              String error = "";
+                              if (value.length < 8) {
+                                error = 'Please enter at least 8 characters\n';
+                              }
+                              if (!(value.contains(RegExp(r'[a-z]')))) {
+                                error +=
+                                    "Please enter at least one lowercase letter\n";
+                              }
+                              if (!(value.contains(RegExp(r'[A-Z]')))) {
+                                error +=
+                                    "Please enter at least one uppercase letter\n";
+                              }
+                              if (!(value.contains(RegExp(r'[0-9]')))) {
+                                error += "Please enter at least one number\n";
+                              }
+                              if (!(value
+                                  .contains(RegExp(r'[!@#%^$&*()?:{}|<>]')))) {
+                                error +=
+                                    "Please enter at least:\n !, @, #, %, ^, \$, &, *, (, ), ?, :, {, }, |, <, >";
+                              }
+                              if (error.isNotEmpty) {
+                                return error.toString();
+                              } else {
+                                return null;
+                              }
+                            }
                           },
                           controller: passwordController,
                           obscureText: true,
@@ -157,14 +155,15 @@ class RegisterPage extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.fromLTRB(50, 20, 50, 0),
                         child: TextFormField(
-                          validator:  (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password ';
-                              } else if (passwordController.text!=passwordController2.text){
-                                return 'The the two passwords don\'t match';
-                              }
-                              return null;
-                            },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password ';
+                            } else if (passwordController.text !=
+                                passwordController2.text) {
+                              return 'The the two passwords don\'t match';
+                            }
+                            return null;
+                          },
                           controller: passwordController2,
                           obscureText: true,
                           decoration: InputDecoration(
@@ -197,7 +196,6 @@ class RegisterPage extends StatelessWidget {
                             ],
                           ),
                           onPressed: () async {
-                            
                             if (_formKey.currentState!.validate()) {
                               //salvo username, password email nelle shared preferences
                               final sp = await SharedPreferences.getInstance();
@@ -208,17 +206,13 @@ class RegisterPage extends StatelessWidget {
                               await sp.setString(
                                   'email', mailController.text.trim());
                               // inserting new user
-                              User user = User(
-                                  0,
-                                  usernameController.text,
-                                  mailController.text,
-                                  1,
-                                  0);
-                
+                              User user = User(0, usernameController.text,
+                                  mailController.text, 1, 0);
+
                               await Provider.of<DatabaseRepository>(context,
                                       listen: false)
                                   .insertUser(user);
-                
+
                               // inserting the list of visitable places into the db
                               List allplaces = Locations().allplaces;
                               for (int i = 0; i < allplaces.length; i++) {
@@ -239,12 +233,7 @@ class RegisterPage extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => LoginPage()));
-                            
                             }
-
-                            
-
-                       
                           },
                         ),
                       ),

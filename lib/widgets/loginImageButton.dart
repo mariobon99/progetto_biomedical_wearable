@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:progetto_wearable/utils/palette.dart';
-import 'package:progetto_wearable/widgets/customSnackBar.dart';
+import 'package:progetto_wearable/utils/utils.dart';
+import 'package:progetto_wearable/widgets/widgets.dart';
 
 class AlternativeLoginButton extends StatelessWidget {
   String assetImagePath;

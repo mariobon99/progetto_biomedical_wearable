@@ -4,3 +4,4 @@ export 'palette.dart';
 export 'placeToVisit.dart';
 export 'functionUtils.dart';
 export 'levels.dart';
+export 'activity.dart';
