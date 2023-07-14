@@ -160,7 +160,7 @@ class RegisterPage extends StatelessWidget {
                                   allplaces[i]['latitudine'],
                                   allplaces[i]['longitudine'],
                                   allplaces[i]['image'],
-                                  'Ciao',
+                                  allplaces[i]['description'],
                                   false);
                               await Provider.of<DatabaseRepository>(context,
                                       listen: false)
